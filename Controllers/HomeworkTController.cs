@@ -7,6 +7,7 @@ using Trial.DTO;
 [Route("api/[controller]")]
 public class HomeworkTController : ControllerBase
 {
+    //ljjvkv
     private readonly IHomeworkTService _homeworkService;
 
     public HomeworkTController(IHomeworkTService homeworkService)

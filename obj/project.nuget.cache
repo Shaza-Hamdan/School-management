@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Bn+f5Suu+HfGlKz3+l5gUeyP4p7whMzeVBhtES8p3L62MmtevHEu2SQS84UHGhxDqHKlnz0GP1j/MMy+nPIvfQ==",
+  "dgSpecHash": "AwSQXydj7gRn4IUOa/dKsN73hRMQ1yWuSaZIwkEM1ZXQNVPT9ccB4X1w39W15IcmSCjhouGsbOiBDe+xfJrWcg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\dell\\Downloads\\Telegram Desktop\\Trial\\Tutorial.csproj",
+  "projectFilePath": "D:\\Tranning\\webapp\\New folder (6)\\class\\Tutorial.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\dell\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\dell\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",
