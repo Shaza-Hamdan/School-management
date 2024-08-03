@@ -10,12 +10,12 @@ using TRIAL.Persistence.entity;
 
 public class HomeworkCleanupService : BackgroundService
 {
-    private readonly AppDBContext _appDbContext;
+    private readonly AppDBContext appdbContext;
     private readonly ILogger<HomeworkCleanupService> _logger;
 
     public HomeworkCleanupService(AppDBContext appDbContext, ILogger<HomeworkCleanupService> logger)
     {
-        _appDbContext = appDbContext;
+        appdbContext = appDbContext;
         _logger = logger;
     }
 
@@ -31,14 +31,14 @@ public class HomeworkCleanupService : BackgroundService
     private async Task CleanupExpiredHomeworksAsync()
     {
         var now = DateTime.UtcNow;
-        var expiredHomeworks = _appDbContext.HwT
+        var expiredHomeworks = appdbContext.HwT
             .Where(h => h.Deadline < now)
             .ToList();
 
         if (expiredHomeworks.Any())
         {
-            _appDbContext.HwT.RemoveRange(expiredHomeworks);
-            await _appDbContext.SaveChangesAsync();
+            appdbContext.HwT.RemoveRange(expiredHomeworks);
+            await appdbContext.SaveChangesAsync();
             _logger.LogInformation("Expired homeworks cleaned up.");
         }
     }

@@ -15,31 +15,51 @@ namespace TRIAL.Services.Implementations
 {
     public class StudentHomeworkService : IStudentHomeworkService
     {
-        private readonly AppDBContext _appDbContext;
+        private readonly AppDBContext appdbContext;
 
         public StudentHomeworkService(AppDBContext appDbContext)
         {
-            _appDbContext = appDbContext;
+            appdbContext = appDbContext;
         }
 
         public async Task<StudentHomeworkDTO> SubmitHomeworkAsync(AddStudentHomeworkDTO addStudentHomeworkDto)
         {
-            var studentHomework = new HomeworkS
+            var studentHomework = new HomeworkStudent
             {
                 perInfoId = addStudentHomeworkDto.perInfoId,
                 homeworkTId = addStudentHomeworkDto.homeworkTId,
                 Solution = addStudentHomeworkDto.Solution
             };
 
-            _appDbContext.HwS.Add(studentHomework);
-            await _appDbContext.SaveChangesAsync();
+            appdbContext.HwS.Add(studentHomework);
+            await appdbContext.SaveChangesAsync();
 
             return new StudentHomeworkDTO(studentHomework.Id, studentHomework.perInfoId, studentHomework.homeworkTId, studentHomework.Solution);
         }
 
+        public async Task<bool> DeleteHomework(DeleteHomework hwork)
+        {
+            // Find the homework submission based on its ID and the student's ID
+            var studentHomework = await appdbContext.HwS
+                .FirstOrDefaultAsync(h => h.homeworkTId == hwork.homeworkTId && h.perInfoId == hwork.perInfoId);
+
+            if (studentHomework == null)
+            {
+                // Homework submission not found
+                return false;
+            }
+
+            // Remove the homework submission from the context
+            appdbContext.HwS.Remove(studentHomework);
+            await appdbContext.SaveChangesAsync();
+
+            return true;
+        }
+
+
         public async Task<StudentHomeworkDTO> GetStudentHomeworkByIdAsync(int id)
         {
-            var studentHomework = await _appDbContext.HwS
+            var studentHomework = await appdbContext.HwS
                 .Include(sh => sh.perInfo)
                 .Include(sh => sh.homeworkT)
                 .FirstOrDefaultAsync(sh => sh.Id == id);
@@ -54,7 +74,7 @@ namespace TRIAL.Services.Implementations
 
         public async Task<bool> UpdateStudentHomeworkAsync(ModifyStudentHomeworkDTO modifyStudentHomeworkDto)
         {
-            var studentHomework = await _appDbContext.HwS.FindAsync(modifyStudentHomeworkDto.Id);
+            var studentHomework = await appdbContext.HwS.FindAsync(modifyStudentHomeworkDto.Id);
             if (studentHomework == null)
             {
                 return false;
@@ -62,16 +82,20 @@ namespace TRIAL.Services.Implementations
 
             studentHomework.Solution = modifyStudentHomeworkDto.Solution;
 
-            _appDbContext.HwS.Update(studentHomework);
-            await _appDbContext.SaveChangesAsync();
+            appdbContext.HwS.Update(studentHomework);
+            await appdbContext.SaveChangesAsync();
 
             return true;
         }
+
+
         public async Task<IEnumerable<StudentHomeworkDTO>> GetStudentHomeworkAsync()
         {
-            return await _appDbContext.HwS
+            return await appdbContext.HwS
                 .Select(h => new StudentHomeworkDTO(h.Id, h.perInfoId, h.homeworkTId, h.Solution))
                 .ToListAsync();
         }
+
+
     }
 }

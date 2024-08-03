@@ -17,16 +17,16 @@ namespace TRIAL.Services.Implementations
     public class ProfileService : IProfileService
 
     {
-        private readonly AppDBContext _appDbContext;
+        private readonly AppDBContext appdbContext;
 
         public ProfileService(AppDBContext appDbContext)
         {
-            _appDbContext = appDbContext;
+            appdbContext = appDbContext;
         }
 
         public async Task<UserProfile> GetUserProfileAsync(int userId)
         {
-            var user = await _appDbContext.registrations.FindAsync(userId);
+            var user = await appdbContext.registrations.FindAsync(userId);
             if (user == null)
             {
                 return null;
@@ -45,7 +45,7 @@ namespace TRIAL.Services.Implementations
 
         public async Task<string> UpdateUserProfileAsync(UserProfile userProfileDto)
         {
-            var existingUser = await _appDbContext.registrations.FindAsync(userProfileDto.Id);
+            var existingUser = await appdbContext.registrations.FindAsync(userProfileDto.Id);
             if (existingUser == null)
             {
                 return "User not found.";
@@ -56,8 +56,8 @@ namespace TRIAL.Services.Implementations
             existingUser.Address = userProfileDto.Address;
             existingUser.PhoneNumber = userProfileDto.PhoneNumber;
 
-            _appDbContext.registrations.Update(existingUser);
-            await _appDbContext.SaveChangesAsync();
+            appdbContext.registrations.Update(existingUser);
+            await appdbContext.SaveChangesAsync();
 
             return "Profile updated successfully.";
         }

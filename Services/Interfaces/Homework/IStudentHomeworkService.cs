@@ -8,5 +8,6 @@ namespace TRIAL.Services
         Task<StudentHomeworkDTO> GetStudentHomeworkByIdAsync(int id);
         Task<IEnumerable<StudentHomeworkDTO>> GetStudentHomeworkAsync();
         Task<bool> UpdateStudentHomeworkAsync(ModifyStudentHomeworkDTO modifyStudentHomeworkDto);
+        Task<bool> DeleteHomework(DeleteHomework hwork);
     }
 }

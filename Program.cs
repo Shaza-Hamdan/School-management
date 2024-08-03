@@ -18,14 +18,14 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyConnection")));
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("ConnectionStrings"));
-builder.Services.AddTransient<IRegistrationService, RegistrationService>();
-builder.Services.AddTransient<IProfileService, ProfileService>();
+builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
-builder.Services.AddTransient<IEmailService, EmailService>();
-builder.Services.AddTransient<ISubjectsRet, SubjectsRet>(); //this method registers the interface and its implementation with the DI container in ASP.NET Core.
-builder.Services.AddTransient<IHomeworkTService, HomeworkTService>();
-builder.Services.AddTransient<IStudentHomeworkService, StudentHomeworkService>();
-builder.Services.AddTransient<HomeworkCleanupService>(); // Register the background service
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<ISubjectsRetrive, SubjectsRetrive>(); //this method registers the interface and its implementation with the DI container in ASP.NET Core.
+builder.Services.AddScoped<IHomeworkTeacherService, HomeworkTeacherService>();
+builder.Services.AddScoped<IStudentHomeworkService, StudentHomeworkService>();
+builder.Services.AddScoped<HomeworkCleanupService>(); // Register the background service
 
 //
 

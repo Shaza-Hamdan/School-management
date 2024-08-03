@@ -6,25 +6,25 @@ using TRIAL.Persistence;
 using Microsoft.Extensions.Options;
 public class EmailService : IEmailService
 {
-    private readonly EmailSettings _emailSettings;
+    private readonly EmailSettings emailsettings;
 
     public EmailService(IOptions<EmailSettings> emailSettings)
     {
-        _emailSettings = emailSettings.Value;
+        emailsettings = emailSettings.Value;
     }
 
     public void SendEmail(string to, string subject, string body)
     {
-        var smtpClient = new SmtpClient(_emailSettings.SmtpServer)
+        var smtpClient = new SmtpClient(emailsettings.SmtpServer)
         {
-            Port = _emailSettings.SmtpPort,
-            Credentials = new NetworkCredential(_emailSettings.SmtpUsername, _emailSettings.SmtpPassword),
+            Port = emailsettings.SmtpPort,
+            Credentials = new NetworkCredential(emailsettings.SmtpUsername, emailsettings.SmtpPassword),
             EnableSsl = true,
         };
 
         var mailMessage = new MailMessage
         {
-            From = new MailAddress(_emailSettings.FromEmail),
+            From = new MailAddress(emailsettings.FromEmail),
             Subject = subject,
             Body = body,
             IsBodyHtml = true,

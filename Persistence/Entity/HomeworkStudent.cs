@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TRIAL.Persistence.entity
 {
-    public class HomeworkS
+    public class HomeworkStudent
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -19,11 +19,11 @@ namespace TRIAL.Persistence.entity
 
         [ForeignKey("perInfo")]
         public int perInfoId { get; set; }
-        public PerInfo? perInfo { get; set; }
+        public PersonalInformation? perInfo { get; set; }
 
 
         [ForeignKey("homeworkT")]
         public int homeworkTId { get; set; }
-        public HomeworkT? homeworkT { get; set; }
+        public HomeworkTeacher? homeworkT { get; set; }
     }
 }

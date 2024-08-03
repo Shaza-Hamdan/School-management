@@ -18,22 +18,22 @@ namespace TRIAL.Controllers
     [Route("api/[controller]")]
     public class RegistrationController : ControllerBase
     {
-        private readonly IRegistrationService _registrationService;
+        private readonly IRegistrationService registrationservice;
         private readonly ILogger<RegistrationController> _logger;
 
         public RegistrationController(IRegistrationService registrationService, ILogger<RegistrationController> logger)
         {
-            _registrationService = registrationService;
+            registrationservice = registrationService;
             _logger = logger;
         }
 
         [HttpPost("register")]
         public IActionResult Register(CreateNewAccount account)
         {
-            //_registrationService.Register(account);
+            //registrationservice.Register(account);
             try
             {
-                var result = _registrationService.Register(account);
+                var result = registrationservice.Register(account);
                 if (result == "Data Inserted")
                 {
                     return Ok(result);
@@ -56,7 +56,7 @@ namespace TRIAL.Controllers
                 return BadRequest(ModelState);
             }
 
-            var result = _registrationService.Login(account);
+            var result = registrationservice.Login(account);
             if (result == "Login Successful")
             {
                 return Ok(result);
@@ -75,7 +75,7 @@ namespace TRIAL.Controllers
         [HttpPost("generate-password-reset-token")]
         public async Task<IActionResult> GeneratePasswordResetToken([FromBody] PasswordResetRequest request)
         {
-            var result = await _registrationService.GeneratePasswordResetTokenAsync(request.Email);
+            var result = await registrationservice.GeneratePasswordResetTokenAsync(request.Email);
             if (result == "Password reset token generated.")
             {
                 return Ok(new { Message = result });
@@ -86,7 +86,7 @@ namespace TRIAL.Controllers
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest model)
         {
-            var result = await _registrationService.ResetPasswordAsync(model);
+            var result = await registrationservice.ResetPasswordAsync(model);
             if (result == "Password reset successful.")
             {
                 return Ok(new { Message = result });

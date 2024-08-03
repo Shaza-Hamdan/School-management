@@ -18,17 +18,17 @@ namespace TRIAL.Controllers
     [Route("api/[controller]")]
     public class ProfileController : ControllerBase
     {
-        private readonly IProfileService _profileService;
+        private readonly IProfileService profileservice;
 
         public ProfileController(IProfileService profileService)
         {
-            _profileService = profileService;
+            profileservice = profileService;
         }
 
-        [HttpGet("profile/{userId}")]
+        [HttpGet("Get/{userId}")]
         public async Task<IActionResult> GetProfile(int userId)
         {
-            var userProfile = await _profileService.GetUserProfileAsync(userId);
+            var userProfile = await profileservice.GetUserProfileAsync(userId);
             if (userProfile == null)
             {
                 return NotFound("User not found.");
@@ -36,10 +36,10 @@ namespace TRIAL.Controllers
             return Ok(userProfile);
         }
 
-        [HttpPut("profile")]
+        [HttpPut("Update")]
         public async Task<IActionResult> UpdateProfile([FromBody] UserProfile userProfileDto)
         {
-            var result = await _profileService.UpdateUserProfileAsync(userProfileDto);
+            var result = await profileservice.UpdateUserProfileAsync(userProfileDto);
             if (result == "User not found.")
             {
                 return NotFound(result);

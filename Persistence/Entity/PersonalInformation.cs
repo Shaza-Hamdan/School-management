@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace TRIAL.Persistence.entity
 {
     [Table("Person_Information")] // the name in db
-    public class PerInfo
+    public class PersonalInformation
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -28,12 +28,12 @@ namespace TRIAL.Persistence.entity
         public String? Person { get; set; }
 
         //oto, every teacher has a subject
-        public Subjects? subjects { get; set; }
+        public Subjects subjects { get; set; }
 
         //parent mtm
-        public ICollection<Marks>? subject { get; set; }
+        public ICollection<Marks> subject { get; set; }
 
-        public ICollection<HomeworkS>? homeworkTs { get; set; }
+        public ICollection<HomeworkStudent> homeworkTs { get; set; }
 
     }
 }

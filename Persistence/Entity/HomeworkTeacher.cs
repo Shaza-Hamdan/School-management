@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TRIAL.Persistence.entity
 {
-    public class HomeworkT
+    public class HomeworkTeacher
     {
 
         [Key]
@@ -24,8 +24,8 @@ namespace TRIAL.Persistence.entity
 
         [ForeignKey("subjects")]
         public int subjectsId { get; set; }
-        public Subjects? subjects { get; set; }
+        public Subjects subjects { get; set; }
 
-        public ICollection<HomeworkS>? perInfos { get; set; }
+        public ICollection<HomeworkStudent>? HomeworkStudent { get; set; }
     }
 }

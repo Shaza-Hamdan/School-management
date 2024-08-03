@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TRIAL.Persistence.Repository;
 
@@ -11,9 +12,11 @@ using TRIAL.Persistence.Repository;
 namespace Tutorial.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240801114748_mig12")]
+    partial class mig12
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,17 +101,17 @@ namespace Tutorial.Migrations
                         .HasColumnType("int")
                         .HasColumnName("Written Mark");
 
-                    b.Property<int>("perInfoId")
+                    b.Property<int>("perInfoID")
                         .HasColumnType("int");
 
-                    b.Property<int>("subjectsId")
+                    b.Property<int>("subjectsID")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("perInfoId");
+                    b.HasIndex("perInfoID");
 
-                    b.HasIndex("subjectsId");
+                    b.HasIndex("subjectsID");
 
                     b.ToTable("marks");
                 });
@@ -218,15 +221,15 @@ namespace Tutorial.Migrations
             modelBuilder.Entity("TRIAL.Persistence.entity.HomeworkStudent", b =>
                 {
                     b.HasOne("TRIAL.Persistence.entity.HomeworkTeacher", "homeworkT")
-                        .WithMany("HomeworkStudent")
+                        .WithMany("perInfos")
                         .HasForeignKey("homeworkTId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("TRIAL.Persistence.entity.PersonalInformation", "perInfo")
                         .WithMany("homeworkTs")
                         .HasForeignKey("perInfoId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("homeworkT");
@@ -239,7 +242,7 @@ namespace Tutorial.Migrations
                     b.HasOne("TRIAL.Persistence.entity.Subjects", "subjects")
                         .WithMany("homeworkTs")
                         .HasForeignKey("subjectsId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("subjects");
@@ -249,13 +252,13 @@ namespace Tutorial.Migrations
                 {
                     b.HasOne("TRIAL.Persistence.entity.PersonalInformation", "perInfo")
                         .WithMany("subject")
-                        .HasForeignKey("perInfoId")
+                        .HasForeignKey("perInfoID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("TRIAL.Persistence.entity.Subjects", "subjects")
                         .WithMany("marks")
-                        .HasForeignKey("subjectsId")
+                        .HasForeignKey("subjectsID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -277,7 +280,7 @@ namespace Tutorial.Migrations
 
             modelBuilder.Entity("TRIAL.Persistence.entity.HomeworkTeacher", b =>
                 {
-                    b.Navigation("HomeworkStudent");
+                    b.Navigation("perInfos");
                 });
 
             modelBuilder.Entity("TRIAL.Persistence.entity.PersonalInformation", b =>
@@ -286,8 +289,7 @@ namespace Tutorial.Migrations
 
                     b.Navigation("subject");
 
-                    b.Navigation("subjects")
-                        .IsRequired();
+                    b.Navigation("subjects");
                 });
 
             modelBuilder.Entity("TRIAL.Persistence.entity.Subjects", b =>

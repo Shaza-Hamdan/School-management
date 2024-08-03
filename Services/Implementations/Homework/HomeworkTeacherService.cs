@@ -8,19 +8,19 @@ using Trial.DTO;
 using TRIAL.Persistence.Repository;
 using TRIAL.Persistence.entity;
 
-public class HomeworkTService : IHomeworkTService
+public class HomeworkTeacherService : IHomeworkTeacherService
 {
-    private readonly AppDBContext _appDbContext;
+    private readonly AppDBContext appdbContext;
 
-    public HomeworkTService(AppDBContext appDbContext)
+    public HomeworkTeacherService(AppDBContext appDbContext)
     {
-        _appDbContext = appDbContext;
+        appdbContext = appDbContext;
     }
 
     public async Task<IEnumerable<HomeworkTDTO>> GetHomeworksAsync()
     {
         await CleanupExpiredHomeworksAsync(); // Clean up before returning the list
-        return await _appDbContext.HwT
+        return await appdbContext.HwT
             .Select(h => new HomeworkTDTO(h.Id, h.Homework, h.Description, h.Deadline))
             .ToListAsync();
     }
@@ -28,19 +28,19 @@ public class HomeworkTService : IHomeworkTService
     private async Task CleanupExpiredHomeworksAsync()
     {
         var now = DateTime.UtcNow;
-        var expiredHomeworks = _appDbContext.HwT
+        var expiredHomeworks = appdbContext.HwT
             .Where(h => h.Deadline < now)
             .ToList();
 
         if (expiredHomeworks.Any())
         {
-            _appDbContext.HwT.RemoveRange(expiredHomeworks);
-            await _appDbContext.SaveChangesAsync();
+            appdbContext.HwT.RemoveRange(expiredHomeworks);
+            await appdbContext.SaveChangesAsync();
         }
     }
     public async Task<HomeworkTDTO> GetHomeworkByIdAsync(int id)
     {
-        var homework = await _appDbContext.HwT.FindAsync(id);
+        var homework = await appdbContext.HwT.FindAsync(id);
         if (homework == null)
         {
             return null;
@@ -50,28 +50,28 @@ public class HomeworkTService : IHomeworkTService
 
     public async Task<HomeworkTDTO> AddHomeworkAsync(AddHomeworkTDTO addHomeworkDto)
     {
-        var subject = await _appDbContext.subjectNa.FindAsync(addHomeworkDto.subjectsId);
+        var subject = await appdbContext.subjectNa.FindAsync(addHomeworkDto.subjectsId);
         if (subject == null)
         {
             throw new Exception("The specified subject does not exist.");
         }
 
-        var homework = new HomeworkT
+        var homework = new HomeworkTeacher
         {
             Homework = addHomeworkDto.Homework,
             Description = addHomeworkDto.Description,
             Deadline = addHomeworkDto.Deadline
         };
 
-        _appDbContext.HwT.Add(homework);
-        await _appDbContext.SaveChangesAsync();
+        appdbContext.HwT.Add(homework);
+        await appdbContext.SaveChangesAsync();
 
         return new HomeworkTDTO(homework.Id, homework.Homework, homework.Description, homework.Deadline);
     }
 
     public async Task<bool> UpdateHomeworkAsync(ModifyHomeworkTDTO modifyHomeworkDto)
     {
-        var homework = await _appDbContext.HwT.FindAsync(modifyHomeworkDto.Id);
+        var homework = await appdbContext.HwT.FindAsync(modifyHomeworkDto.Id);
         if (homework == null)
         {
             return false;
@@ -81,8 +81,8 @@ public class HomeworkTService : IHomeworkTService
         homework.Description = modifyHomeworkDto.Description;
         homework.Deadline = modifyHomeworkDto.Deadline;
 
-        _appDbContext.HwT.Update(homework);
-        await _appDbContext.SaveChangesAsync();
+        appdbContext.HwT.Update(homework);
+        await appdbContext.SaveChangesAsync();
 
         return true;
     }

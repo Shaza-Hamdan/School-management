@@ -15,5 +15,9 @@ namespace Trial.DTO
         int Id,
         string Solution);
 
+    public record DeleteHomework(
+        int homeworkTId,
+        int perInfoId
+    );
 
 }

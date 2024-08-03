@@ -5,26 +5,26 @@ using Trial.DTO;
 
 [ApiController]
 [Route("api/[controller]")]
-public class HomeworkTController : ControllerBase
+public class HomeworkTeacherController : ControllerBase
 {
     //ljjvkv
-    private readonly IHomeworkTService _homeworkService;
+    private readonly IHomeworkTeacherService homeworkservice;
 
-    public HomeworkTController(IHomeworkTService homeworkService)
+    public HomeworkTeacherController(IHomeworkTeacherService homeworkService)
     {
-        _homeworkService = homeworkService;
+        homeworkservice = homeworkService;
     }
 
     [HttpGet]
     public async Task<IEnumerable<HomeworkTDTO>> GetHomeworks()
     {
-        return await _homeworkService.GetHomeworksAsync();
+        return await homeworkservice.GetHomeworksAsync();
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("Get/{id}")]
     public async Task<ActionResult<HomeworkTDTO>> GetHomework(int id)
     {
-        var homework = await _homeworkService.GetHomeworkByIdAsync(id);
+        var homework = await homeworkservice.GetHomeworkByIdAsync(id);
         if (homework == null)
         {
             return NotFound();
@@ -32,14 +32,14 @@ public class HomeworkTController : ControllerBase
         return homework;
     }
 
-    [HttpPost]
+    [HttpPost("Post")]
     public async Task<ActionResult<HomeworkTDTO>> AddHomework(AddHomeworkTDTO addHomeworkDto)
     {
-        var homework = await _homeworkService.AddHomeworkAsync(addHomeworkDto);
+        var homework = await homeworkservice.AddHomeworkAsync(addHomeworkDto);
         return CreatedAtAction(nameof(GetHomework), new { id = homework.Id }, homework);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("Put/{id}")]
     public async Task<IActionResult> UpdateHomework(int id, ModifyHomeworkTDTO modifyHomeworkDto)
     {
         if (id != modifyHomeworkDto.Id)
@@ -47,7 +47,7 @@ public class HomeworkTController : ControllerBase
             return BadRequest();
         }
 
-        var result = await _homeworkService.UpdateHomeworkAsync(modifyHomeworkDto);
+        var result = await homeworkservice.UpdateHomeworkAsync(modifyHomeworkDto);
         if (!result)
         {
             return NotFound();

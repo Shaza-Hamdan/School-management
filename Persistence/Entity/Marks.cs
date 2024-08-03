@@ -13,13 +13,13 @@ namespace TRIAL.Persistence.entity
 
 
         [ForeignKey("perInfo")]
-        public int perInfoID { get; set; }
-        public PerInfo? perInfo { get; set; }
+        public int perInfoId { get; set; }
+        public PersonalInformation? perInfo { get; set; }
 
 
         [ForeignKey("subjects")]
-        public int subjectsID { get; set; }
-        public Subjects? subjects { get; set; }
+        public int subjectsId { get; set; }
+        public Subjects subjects { get; set; }
 
 
         [Required]
