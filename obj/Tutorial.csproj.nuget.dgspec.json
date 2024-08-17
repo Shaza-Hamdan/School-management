@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\game\\Desktop\\gitlab\\class-1\\Tutorial.csproj": {}
+    "C:\\Users\\game\\Desktop\\Ali\\class\\Tutorial.csproj": {}
   },
   "projects": {
-    "C:\\Users\\game\\Desktop\\gitlab\\class-1\\Tutorial.csproj": {
+    "C:\\Users\\game\\Desktop\\Ali\\class\\Tutorial.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\game\\Desktop\\gitlab\\class-1\\Tutorial.csproj",
+        "projectUniqueName": "C:\\Users\\game\\Desktop\\Ali\\class\\Tutorial.csproj",
         "projectName": "Tutorial",
-        "projectPath": "C:\\Users\\game\\Desktop\\gitlab\\class-1\\Tutorial.csproj",
+        "projectPath": "C:\\Users\\game\\Desktop\\Ali\\class\\Tutorial.csproj",
         "packagesPath": "C:\\Users\\game\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\game\\Desktop\\gitlab\\class-1\\obj\\",
+        "outputPath": "C:\\Users\\game\\Desktop\\Ali\\class\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

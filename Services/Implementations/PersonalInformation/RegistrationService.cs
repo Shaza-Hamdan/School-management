@@ -11,6 +11,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.HttpResults;
+using EncryptDecrypt;
 
 namespace TRIAL.Services.Implementations
 {
@@ -33,7 +34,9 @@ namespace TRIAL.Services.Implementations
 
         public string Register(CreateNewAccount account)
         {
-            string passwordHash = BCrypt.Net.BCrypt.HashPassword(account.Password); //Using BCrypt for hashing the password
+            //string passwordHash = BCrypt.Net.BCrypt.HashPassword(account.Password); //Using BCrypt for hashing the password
+            string passwordHash = EnDePassword.ConvertToEncrypt(account.Password);
+
             try
             {
                 var registration = new Registration
@@ -83,9 +86,19 @@ namespace TRIAL.Services.Implementations
                 return "NotFound";
             }
 
+            string decryptedPassword = EnDePassword.ConvertToDecrypt(user.PasswordHash);
+
             // Compare the hashed password
-            bool isPasswordValid = BCrypt.Net.BCrypt.Verify(account.Password, user.PasswordHash);
-            return isPasswordValid ? "Login Successful" : "Invalid Email or Password";
+            if (decryptedPassword == account.Password)
+            {
+                return "Login Successful";
+            }
+            // bool isPasswordValid = BCrypt.Net.BCrypt.Verify(account.Password, user.PasswordHash);
+            return "Invalid Email or Password";
+
+            // Compare the hashed password
+            //bool isPasswordValid = BCrypt.Net.BCrypt.Verify(account.Password, user.PasswordHash);
+            //return isPasswordValid ? "Login Successful" : "Invalid Email or Password";
         }
 
         public async Task<string> GeneratePasswordResetTokenAsync(string email) //send the link to the email after this the email contains the link

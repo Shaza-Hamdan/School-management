@@ -16,7 +16,7 @@ namespace TRIAL.Persistence.entity
 
         [Required]
         [Column("Discription")]
-        public string Description { get; set; }
+        public string Discription { get; set; }
 
         [Required]
         public DateTime Deadline { get; set; }

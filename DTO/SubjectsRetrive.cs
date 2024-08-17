@@ -2,6 +2,25 @@ using System.Collections.Generic;
 
 namespace Trial.DTO
 {
+    public record AddNewSubject(
+    string SubName,
+    string Discription,
+    int perInfoId
+);
+
+    public record AddNewSubjectDTO(
+        int Id,
+        string SubName,
+        string Discription,
+        int perInfoId
+    );
+
+    public record UpdateSubject(
+        int Id,
+        string SubName,
+        string Discription,
+         int perInfoId
+    );
     public record SubjectRetrieving(
 
         String SubName,

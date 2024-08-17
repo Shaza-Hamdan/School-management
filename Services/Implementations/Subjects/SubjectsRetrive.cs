@@ -43,7 +43,7 @@ namespace TRIAL.Services.Implementations
             }
 
             var marks = subject.marks.Select(m => new MarkDTO(m.Id, m.Oral, m.Written));//Convert Marks to MarkDTOs 
-            var homeworkAssignments = subject.homeworkTs.Select(h => new HomeworkDTO(h.Id, h.Homework, h.Deadline, h.Description));//Convert Homework Assignments to HomeworkDTOs
+            var homeworkAssignments = subject.homeworkTs.Select(h => new HomeworkDTO(h.Id, h.Homework, h.Deadline, h.Discription));//Convert Homework Assignments to HomeworkDTOs
 
             return new SubjectDetails(subject.Id, subject.SubName, marks, homeworkAssignments);
         }
@@ -74,6 +74,40 @@ namespace TRIAL.Services.Implementations
             await appdbContext.SaveChangesAsync();
             return true;
         }
+
+        public async Task<AddNewSubjectDTO> AddNewSubject(AddNewSubject subject)
+        {
+            // Create a new subject entity
+            var newSubject = new Subjects
+            {
+                SubName = subject.SubName,
+                Discription = subject.Discription,
+                perInfoId = subject.perInfoId
+            };
+            appdbContext.subjectNa.Add(newSubject);
+            await appdbContext.SaveChangesAsync();
+
+            return new AddNewSubjectDTO(newSubject.Id, newSubject.SubName, newSubject.Discription, newSubject.perInfoId);
+
+        }
+
+        public async Task<bool> UpdateSubject(UpdateSubject UpSub)
+        {
+            var subject = await appdbContext.subjectNa.FindAsync(UpSub.Id);
+            if (subject == null)
+            {
+                return false;
+            }
+
+            subject.SubName = UpSub.SubName;
+            subject.Discription = UpSub.Discription;
+            subject.perInfoId = UpSub.perInfoId;
+            appdbContext.subjectNa.Update(subject);
+            await appdbContext.SaveChangesAsync();
+
+            return true;
+        }
+
     }
 
 }

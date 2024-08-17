@@ -56,5 +56,40 @@ namespace TRIAL.Controllers
 
             return Ok(new { Message = "Subject deleted successfully." });
         }
+
+        [HttpPost("Add")]
+        public async Task<IActionResult> AddNewSubject([FromBody] AddNewSubject subject)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var newSubject = await subjectsret.AddNewSubject(subject);
+            return CreatedAtAction(nameof(GetSubjectDetail), new { id = newSubject.Id }, newSubject);
+        }
+
+        [HttpPut("Update/{id}")]
+        public async Task<IActionResult> UpdateSubject(int id, [FromBody] UpdateSubject updateSubject)
+        {
+            if (id != updateSubject.Id)
+            {
+                return BadRequest("Subject ID mismatch");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var result = await subjectsret.UpdateSubject(updateSubject);
+
+            if (!result)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+        }
     }
 }

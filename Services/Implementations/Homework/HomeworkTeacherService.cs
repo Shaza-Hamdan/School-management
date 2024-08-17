@@ -21,7 +21,7 @@ public class HomeworkTeacherService : IHomeworkTeacherService
     {
         await CleanupExpiredHomeworksAsync(); // Clean up before returning the list
         return await appdbContext.HwT
-            .Select(h => new HomeworkTDTO(h.Id, h.Homework, h.Description, h.Deadline))
+            .Select(h => new HomeworkTDTO(h.Id, h.Homework, h.Discription, h.Deadline))
             .ToListAsync();
     }
 
@@ -45,7 +45,7 @@ public class HomeworkTeacherService : IHomeworkTeacherService
         {
             return null;
         }
-        return new HomeworkTDTO(homework.Id, homework.Homework, homework.Description, homework.Deadline);
+        return new HomeworkTDTO(homework.Id, homework.Homework, homework.Discription, homework.Deadline);
     }
 
     public async Task<HomeworkTDTO> AddHomeworkAsync(AddHomeworkTDTO addHomeworkDto)
@@ -59,14 +59,14 @@ public class HomeworkTeacherService : IHomeworkTeacherService
         var homework = new HomeworkTeacher
         {
             Homework = addHomeworkDto.Homework,
-            Description = addHomeworkDto.Description,
+            Discription = addHomeworkDto.Discription,
             Deadline = addHomeworkDto.Deadline
         };
 
         appdbContext.HwT.Add(homework);
         await appdbContext.SaveChangesAsync();
 
-        return new HomeworkTDTO(homework.Id, homework.Homework, homework.Description, homework.Deadline);
+        return new HomeworkTDTO(homework.Id, homework.Homework, homework.Discription, homework.Deadline);
     }
 
     public async Task<bool> UpdateHomeworkAsync(ModifyHomeworkTDTO modifyHomeworkDto)
@@ -78,7 +78,7 @@ public class HomeworkTeacherService : IHomeworkTeacherService
         }
 
         homework.Homework = modifyHomeworkDto.Homework;
-        homework.Description = modifyHomeworkDto.Description;
+        homework.Discription = modifyHomeworkDto.Discription;
         homework.Deadline = modifyHomeworkDto.Deadline;
 
         appdbContext.HwT.Update(homework);

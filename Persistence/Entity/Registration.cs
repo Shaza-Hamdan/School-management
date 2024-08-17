@@ -25,7 +25,7 @@ namespace TRIAL.Persistence.entity
         [Required]
         public string PhoneNumber { get; set; }
         // Add these properties
-        public string PasswordResetToken { get; set; }
+        public string? PasswordResetToken { get; set; }
         public DateTime? ResetTokenExpiration { get; set; }
 
     }
