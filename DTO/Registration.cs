@@ -35,4 +35,6 @@ namespace Trial.DTO
      string Address,
      string PhoneNumber
      );
+
+
 }

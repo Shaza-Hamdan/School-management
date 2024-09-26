@@ -13,7 +13,7 @@ namespace TRIAL.Persistence.Repository
         public DbSet<PersonalInformation> PersonalInfo { get; set; }
         public DbSet<Subjects> subjectNa { get; set; }
         public DbSet<Registration> registrations { get; set; }
-
+        public DbSet<EmailVerification> emailVerification { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // base.OnModelCreating(modelBuilder);

@@ -32,46 +32,129 @@ namespace TRIAL.Services.Implementations
 
         //
 
-        public string Register(CreateNewAccount account)
+        // public string Register(CreateNewAccount account)
+        // {
+        //     //string passwordHash = BCrypt.Net.BCrypt.HashPassword(account.Password); //Using BCrypt for hashing the password
+        //     string passwordHash = EnDePassword.ConvertToEncrypt(account.Password);
+
+        //     try
+        //     {
+        //         var registration = new Registration
+        //         {
+        //             UserName = account.UserName,
+        //             Email = account.Email,
+        //             PasswordHash = passwordHash,
+        //             DateOfBirth = account.DateOfBirth,
+        //             Address = account.Address,
+        //             PhoneNumber = account.PhoneNumber
+        //         };
+
+        //         appdbContext.registrations.Add(registration);
+        //         int rowsAffected = appdbContext.SaveChanges();
+
+        //         if (rowsAffected > 0)
+        //         {
+        //             return "Data Inserted";
+        //         }
+        //         else
+        //         {
+        //             return "Error";
+        //         }
+        //     }
+        //     catch (DbUpdateException ex)
+        //     {
+        //         // Log the exception (ex) here or handle it as needed
+        //         return $"SQL Error: {ex.Message}";
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         // Log the exception (ex) here or handle it as needed
+        //         return $"General Error: {ex.Message}";
+        //     }
+
+        // }
+        public string Register(string email)
         {
-            //string passwordHash = BCrypt.Net.BCrypt.HashPassword(account.Password); //Using BCrypt for hashing the password
-            string passwordHash = EnDePassword.ConvertToEncrypt(account.Password);
+            // Check if the email already exists
+            var existingUser = appdbContext.registrations.SingleOrDefault(u => u.Email == email);
 
-            try
+            if (existingUser != null)
             {
-                var registration = new Registration
-                {
-                    UserName = account.UserName,
-                    Email = account.Email,
-                    PasswordHash = passwordHash,
-                    DateOfBirth = account.DateOfBirth,
-                    Address = account.Address,
-                    PhoneNumber = account.PhoneNumber
-                };
-
-                appdbContext.registrations.Add(registration);
-                int rowsAffected = appdbContext.SaveChanges();
-
-                if (rowsAffected > 0)
-                {
-                    return "Data Inserted";
-                }
-                else
-                {
-                    return "Error";
-                }
-            }
-            catch (DbUpdateException ex)
-            {
-                // Log the exception (ex) here or handle it as needed
-                return $"SQL Error: {ex.Message}";
-            }
-            catch (Exception ex)
-            {
-                // Log the exception (ex) here or handle it as needed
-                return $"General Error: {ex.Message}";
+                return "Email already exists";
             }
 
+            // Email does not exist, generate a verification code
+            string verificationCode = GenerateVerificationCode();
+
+            // Store the verification code in a temporary table or cache with expiration
+            StoreVerificationCode(email, verificationCode);
+
+            // Send verification code to the email
+            emailservice.SendEmail(email, "Verification Code", $"Your verification code is {verificationCode}");
+            return "Verification code sent to email";
+        }
+
+        private string GenerateVerificationCode()
+        {
+            Random random = new Random();
+            return random.Next(100000, 999999).ToString(); // 6-digit code //The Next() method of the Random class generates a random integer within a specified range
+        }
+
+        private void StoreVerificationCode(string email, string code)
+        {
+            // You can store this in a temporary table with expiration time
+            var verificationEntry = new EmailVerification
+            {
+                Email = email,
+                Code = code,
+                Expiry = DateTime.Now.AddMinutes(15) // Set expiry time
+            };
+
+            appdbContext.emailVerification.Add(verificationEntry);
+            appdbContext.SaveChanges();
+        }
+
+        public string VerifyCode(VerifyCodeRequest request)
+        {
+            var verificationEntry = appdbContext.emailVerification
+                .SingleOrDefault(v => v.Email == request.Email && v.Code == request.Code);
+
+            if (verificationEntry == null || verificationEntry.Expiry < DateTime.Now)
+            {
+                return "Invalid or expired verification code";
+            }
+
+            // Code is valid, proceed with sending the username and password
+            return GenerateAndSendCredentials(request.Email);
+        }
+
+        private string GenerateAndSendCredentials(string email)
+        {
+            // Extract the local part of the email for the username
+            string localPart = email.Split('@')[0]; // Get the part before '@'
+
+            // Generate username and password
+            string username = localPart + "_" + Guid.NewGuid().ToString().Substring(0, 4);
+            string password = Guid.NewGuid().ToString().Substring(0, 10); // Random 10-character password
+
+            // Hash the password before storing
+            string passwordHash = EnDePassword.ConvertToEncrypt(password);
+
+            // Store the user in the database
+            var registration = new Registration
+            {
+                UserName = username,
+                Email = email,
+                PasswordHash = passwordHash
+            };
+
+            appdbContext.registrations.Add(registration);
+            appdbContext.SaveChanges();
+
+            // Send the username and password to the user's email
+            emailservice.SendEmail(email, "Your Account Details", $"Username: {username}\nPassword: {password}");
+
+            return "Username and password sent to email";
         }
 
 

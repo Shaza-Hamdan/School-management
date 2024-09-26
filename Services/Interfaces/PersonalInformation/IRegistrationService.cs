@@ -4,9 +4,10 @@ namespace TRIAL.Services
 {
     public interface IRegistrationService
     {
-        string Register(CreateNewAccount account);
+        string Register(string email);
         string Login(LoginRequest account);
         Task<string> GeneratePasswordResetTokenAsync(string email);
         Task<string> ResetPasswordAsync(ResetPasswordRequest model);
+        string VerifyCode(VerifyCodeRequest request);
     }
 }

@@ -28,24 +28,29 @@ namespace TRIAL.Controllers
         }
 
         [HttpPost("register")]
-        public IActionResult Register(CreateNewAccount account)
+        public IActionResult Register(string email)
         {
             //registrationservice.Register(account);
-            try
-            {
-                var result = registrationservice.Register(account);
-                if (result == "Data Inserted")
-                {
-                    return Ok(result);
-                }
 
-                return StatusCode(500, result);
-            }
-            catch (Exception ex)
+            var result = registrationservice.Register(email);
+            if (result == "Email already exists")
             {
-                _logger.LogError(ex, "An error occurred while registering the user.");
-                return StatusCode(500, "Internal server error.");
+                return BadRequest(new { message = "Email already exists." });
             }
+
+            return Ok(new { message = "Verification code sent to email." });
+        }
+
+        [HttpPost("VerifyCode")]
+        public IActionResult VerifyCode([FromBody] VerifyCodeRequest request)
+        {
+            var result = registrationservice.VerifyCode(request);
+            if (result == "Invalid or expired verification code")
+            {
+                return BadRequest(result); // 400 Bad Request
+            }
+
+            return Ok(result); // 200 OK
         }
 
         [HttpPost("login")]
