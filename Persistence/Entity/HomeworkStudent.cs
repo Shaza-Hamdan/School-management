@@ -2,7 +2,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-
 namespace TRIAL.Persistence.entity
 {
     public class HomeworkStudent
@@ -12,18 +11,18 @@ namespace TRIAL.Persistence.entity
         public int Id { get; set; }
 
         [Required]
-        public string? Solution { get; set; }
+        [Column(TypeName = "TEXT")] // For large text data
+        public string Solution { get; set; }
 
-        public DateTime Created { get; set; } = DateTime.Now;
+        [Column(TypeName = "DATETIME")] // For date and time
+        public DateTime Created { get; set; } // = DateTime.Now;
 
+        [ForeignKey("PerInfo")] // Updated to PascalCase
+        public int PerInfoId { get; set; } // Updated to PascalCase
+        public PersonalInformation PerInfo { get; set; }
 
-        [ForeignKey("perInfo")]
-        public int perInfoId { get; set; }
-        public PersonalInformation? perInfo { get; set; }
-
-
-        [ForeignKey("homeworkT")]
-        public int homeworkTId { get; set; }
-        public HomeworkTeacher? homeworkT { get; set; }
+        [ForeignKey("HomeworkT")] // Updated to PascalCase
+        public int HomeworkTId { get; set; } // Updated to PascalCase
+        public HomeworkTeacher HomeworkT { get; set; }
     }
 }

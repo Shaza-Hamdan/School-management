@@ -12,6 +12,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.HttpResults;
 using EncryptDecrypt;
+using VerificationRegisterN;
 
 namespace TRIAL.Services.Implementations
 {
@@ -21,58 +22,18 @@ namespace TRIAL.Services.Implementations
         private readonly AppDBContext appdbContext;
         private readonly DatabaseSettings dBSettings;
         private readonly IEmailService emailservice; // Declare the email service
+        private readonly VerificationRegister verificationRegister;
 
-        public RegistrationService(AppDBContext appDbContext, IOptions<DatabaseSettings> dbSettings, IEmailService emailService)
+        public RegistrationService(AppDBContext appDbContext, IOptions<DatabaseSettings> dbSettings, IEmailService emailService, VerificationRegister verificationregister)
         {
             appdbContext = appDbContext;
             dBSettings = dbSettings.Value ?? throw new ArgumentNullException(nameof(dbSettings));
             emailservice = emailService ?? throw new ArgumentNullException(nameof(emailService)); // Initialize the email service
+            verificationRegister = verificationregister;
 
         }
 
-        //
 
-        // public string Register(CreateNewAccount account)
-        // {
-        //     //string passwordHash = BCrypt.Net.BCrypt.HashPassword(account.Password); //Using BCrypt for hashing the password
-        //     string passwordHash = EnDePassword.ConvertToEncrypt(account.Password);
-
-        //     try
-        //     {
-        //         var registration = new Registration
-        //         {
-        //             UserName = account.UserName,
-        //             Email = account.Email,
-        //             PasswordHash = passwordHash,
-        //             DateOfBirth = account.DateOfBirth,
-        //             Address = account.Address,
-        //             PhoneNumber = account.PhoneNumber
-        //         };
-
-        //         appdbContext.registrations.Add(registration);
-        //         int rowsAffected = appdbContext.SaveChanges();
-
-        //         if (rowsAffected > 0)
-        //         {
-        //             return "Data Inserted";
-        //         }
-        //         else
-        //         {
-        //             return "Error";
-        //         }
-        //     }
-        //     catch (DbUpdateException ex)
-        //     {
-        //         // Log the exception (ex) here or handle it as needed
-        //         return $"SQL Error: {ex.Message}";
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         // Log the exception (ex) here or handle it as needed
-        //         return $"General Error: {ex.Message}";
-        //     }
-
-        // }
         public string Register(string email)
         {
             // Check if the email already exists
@@ -84,34 +45,14 @@ namespace TRIAL.Services.Implementations
             }
 
             // Email does not exist, generate a verification code
-            string verificationCode = GenerateVerificationCode();
+            string verificationCode = verificationRegister.GenerateVerificationCode();
 
             // Store the verification code in a temporary table or cache with expiration
-            StoreVerificationCode(email, verificationCode);
+            verificationRegister.StoreVerificationCode(email, verificationCode);
 
             // Send verification code to the email
             emailservice.SendEmail(email, "Verification Code", $"Your verification code is {verificationCode}");
             return "Verification code sent to email";
-        }
-
-        private string GenerateVerificationCode()
-        {
-            Random random = new Random();
-            return random.Next(100000, 999999).ToString(); // 6-digit code //The Next() method of the Random class generates a random integer within a specified range
-        }
-
-        private void StoreVerificationCode(string email, string code)
-        {
-            // You can store this in a temporary table with expiration time
-            var verificationEntry = new EmailVerification
-            {
-                Email = email,
-                Code = code,
-                Expiry = DateTime.Now.AddMinutes(15) // Set expiry time
-            };
-
-            appdbContext.emailVerification.Add(verificationEntry);
-            appdbContext.SaveChanges();
         }
 
         public string VerifyCode(VerifyCodeRequest request)
@@ -125,38 +66,8 @@ namespace TRIAL.Services.Implementations
             }
 
             // Code is valid, proceed with sending the username and password
-            return GenerateAndSendCredentials(request.Email);
+            return verificationRegister.GenerateAndSendCredentials(request.Email);
         }
-
-        private string GenerateAndSendCredentials(string email)
-        {
-            // Extract the local part of the email for the username
-            string localPart = email.Split('@')[0]; // Get the part before '@'
-
-            // Generate username and password
-            string username = localPart + "_" + Guid.NewGuid().ToString().Substring(0, 4);
-            string password = Guid.NewGuid().ToString().Substring(0, 10); // Random 10-character password
-
-            // Hash the password before storing
-            string passwordHash = EnDePassword.ConvertToEncrypt(password);
-
-            // Store the user in the database
-            var registration = new Registration
-            {
-                UserName = username,
-                Email = email,
-                PasswordHash = passwordHash
-            };
-
-            appdbContext.registrations.Add(registration);
-            appdbContext.SaveChanges();
-
-            // Send the username and password to the user's email
-            emailservice.SendEmail(email, "Your Account Details", $"Username: {username}\nPassword: {password}");
-
-            return "Username and password sent to email";
-        }
-
 
 
         public string Login(LoginRequest account)
@@ -165,23 +76,43 @@ namespace TRIAL.Services.Implementations
 
             if (user == null)
             {
-                // User not found
                 return "NotFound";
             }
 
             string decryptedPassword = EnDePassword.ConvertToDecrypt(user.PasswordHash);
 
             // Compare the hashed password
-            if (decryptedPassword == account.Password)
+            if (decryptedPassword != account.Password)
             {
-                return "Login Successful";
+                return "Invalid Email or Password";
             }
-            // bool isPasswordValid = BCrypt.Net.BCrypt.Verify(account.Password, user.PasswordHash);
-            return "Invalid Email or Password";
+            // Check if the user's profile is complete
+            if (!user.IsProfileComplete)
+            {
+                // If the profile data is provided in the login request, update the profile
+                if (!string.IsNullOrEmpty(account.Address) &&
+                    !string.IsNullOrEmpty(account.PhoneNumber) &&
+                    account.DateOfBirth != default(DateTime))
+                {
+                    // Update user's profile information
+                    user.Address = account.Address;
+                    user.PhoneNumber = account.PhoneNumber;
+                    user.DateOfBirth = account.DateOfBirth;
+                    user.IsProfileComplete = true; // Mark profile as complete
 
-            // Compare the hashed password
-            //bool isPasswordValid = BCrypt.Net.BCrypt.Verify(account.Password, user.PasswordHash);
-            //return isPasswordValid ? "Login Successful" : "Invalid Email or Password";
+                    appdbContext.SaveChanges();
+
+                    return "Login Successful, Profile Updated";
+                }
+                else
+                {
+                    // Profile is incomplete and required data is missing
+                    return "ProfileIncomplete, Fill the required fields";
+                }
+            }
+
+            return "Login Successful";
+
         }
 
         public async Task<string> GeneratePasswordResetTokenAsync(string email) //send the link to the email after this the email contains the link

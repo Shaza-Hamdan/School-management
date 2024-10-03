@@ -3,6 +3,7 @@ using TRIAL.Persistence.Repository;
 using TRIAL.Services;
 using TRIAL.Persistence;
 using TRIAL.Services.Implementations;
+using VerificationRegisterN;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,8 +16,9 @@ builder.Logging.AddConsole();
 
 // Add services to the container.
 builder.Services.AddControllers();
+var connectionString = builder.Configuration.GetConnectionString("MyConnection");
 builder.Services.AddDbContext<AppDBContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("MyConnection")));
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("ConnectionStrings"));
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
@@ -26,7 +28,7 @@ builder.Services.AddScoped<ISubjectsRetrive, SubjectsRetrive>(); //this method r
 builder.Services.AddScoped<IHomeworkTeacherService, HomeworkTeacherService>();
 builder.Services.AddScoped<IStudentHomeworkService, StudentHomeworkService>();
 builder.Services.AddScoped<HomeworkCleanupService>(); // Register the background service
-
+builder.Services.AddScoped<VerificationRegister>();
 //
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -13,7 +13,11 @@ namespace Trial.DTO
 
     public record LoginRequest(
         string Email,
-        string Password
+        string Password,
+        // Optional fields for profile update
+        string Address,
+        string PhoneNumber,
+        DateTime DateOfBirth
     );
 
     public record PasswordResetRequest(

@@ -26,22 +26,22 @@ namespace TRIAL.Services.Implementations
         {
             var studentHomework = new HomeworkStudent
             {
-                perInfoId = addStudentHomeworkDto.perInfoId,
-                homeworkTId = addStudentHomeworkDto.homeworkTId,
+                PerInfoId = addStudentHomeworkDto.perInfoId,
+                HomeworkTId = addStudentHomeworkDto.homeworkTId,
                 Solution = addStudentHomeworkDto.Solution
             };
 
             appdbContext.HwS.Add(studentHomework);
             await appdbContext.SaveChangesAsync();
 
-            return new StudentHomeworkDTO(studentHomework.Id, studentHomework.perInfoId, studentHomework.homeworkTId, studentHomework.Solution);
+            return new StudentHomeworkDTO(studentHomework.Id, studentHomework.PerInfoId, studentHomework.HomeworkTId, studentHomework.Solution);
         }
 
         public async Task<bool> DeleteHomework(DeleteHomework hwork)
         {
             // Find the homework submission based on its ID and the student's ID
             var studentHomework = await appdbContext.HwS
-                .FirstOrDefaultAsync(h => h.homeworkTId == hwork.homeworkTId && h.perInfoId == hwork.perInfoId);
+                .FirstOrDefaultAsync(h => h.HomeworkTId == hwork.homeworkTId && h.PerInfoId == hwork.perInfoId);
 
             if (studentHomework == null)
             {
@@ -60,8 +60,8 @@ namespace TRIAL.Services.Implementations
         public async Task<StudentHomeworkDTO> GetStudentHomeworkByIdAsync(int id)
         {
             var studentHomework = await appdbContext.HwS
-                .Include(sh => sh.perInfo)
-                .Include(sh => sh.homeworkT)
+                .Include(sh => sh.PerInfo)
+                .Include(sh => sh.HomeworkT)
                 .FirstOrDefaultAsync(sh => sh.Id == id);
 
             if (studentHomework == null)
@@ -69,7 +69,7 @@ namespace TRIAL.Services.Implementations
                 return null;
             }
 
-            return new StudentHomeworkDTO(studentHomework.Id, studentHomework.perInfoId, studentHomework.homeworkTId, studentHomework.Solution);
+            return new StudentHomeworkDTO(studentHomework.Id, studentHomework.PerInfoId, studentHomework.HomeworkTId, studentHomework.Solution);
         }
 
         public async Task<bool> UpdateStudentHomeworkAsync(ModifyStudentHomeworkDTO modifyStudentHomeworkDto)
@@ -92,7 +92,7 @@ namespace TRIAL.Services.Implementations
         public async Task<IEnumerable<StudentHomeworkDTO>> GetStudentHomeworkAsync()
         {
             return await appdbContext.HwS
-                .Select(h => new StudentHomeworkDTO(h.Id, h.perInfoId, h.homeworkTId, h.Solution))
+                .Select(h => new StudentHomeworkDTO(h.Id, h.PerInfoId, h.HomeworkTId, h.Solution))
                 .ToListAsync();
         }
 

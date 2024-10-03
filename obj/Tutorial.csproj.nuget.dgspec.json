@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\game\\Desktop\\be\\class\\Tutorial.csproj": {}
+    "C:\\Users\\game\\Desktop\\be\\reg\\class\\Tutorial.csproj": {}
   },
   "projects": {
-    "C:\\Users\\game\\Desktop\\be\\class\\Tutorial.csproj": {
+    "C:\\Users\\game\\Desktop\\be\\reg\\class\\Tutorial.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\game\\Desktop\\be\\class\\Tutorial.csproj",
+        "projectUniqueName": "C:\\Users\\game\\Desktop\\be\\reg\\class\\Tutorial.csproj",
         "projectName": "Tutorial",
-        "projectPath": "C:\\Users\\game\\Desktop\\be\\class\\Tutorial.csproj",
+        "projectPath": "C:\\Users\\game\\Desktop\\be\\reg\\class\\Tutorial.csproj",
         "packagesPath": "C:\\Users\\game\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\game\\Desktop\\be\\class\\obj\\",
+        "outputPath": "C:\\Users\\game\\Desktop\\be\\reg\\class\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -88,6 +88,10 @@
             "Microsoft.Extensions.Configuration.Json": {
               "target": "Package",
               "version": "[8.0.0, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[8.0.2, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",

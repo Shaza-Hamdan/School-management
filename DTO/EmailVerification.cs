@@ -3,6 +3,7 @@ namespace Trial.DTO
     public record VerifyCodeRequest
      (
          string Email,
-         string Code
+         string Code,
+         DateTime Expiry
      );
 }

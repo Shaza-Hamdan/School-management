@@ -12,8 +12,8 @@ using TRIAL.Persistence.Repository;
 namespace Tutorial.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20240725095625_mig7")]
-    partial class mig7
+    [Migration("20241003205512_InitialMySQLMigration1")]
+    partial class InitialMySQLMigration1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,67 +21,91 @@ namespace Tutorial.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.7")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("TRIAL.Persistence.entity.HomeworkS", b =>
+            modelBuilder.Entity("TRIAL.Persistence.entity.EmailVerification", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Homework")
+                    b.Property<string>("Code")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(6)
+                        .HasColumnType("varchar(6)");
 
-                    b.Property<int>("homeworkTId")
-                        .HasColumnType("int");
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
-                    b.Property<int>("perInfoId")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("Expiry")
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("homeworkTId");
+                    b.ToTable("emailVerification");
+                });
 
-                    b.HasIndex("perInfoId");
+            modelBuilder.Entity("TRIAL.Persistence.entity.HomeworkStudent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("DATETIME");
+
+                    b.Property<int>("HomeworkTId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PerInfoId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Solution")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HomeworkTId");
+
+                    b.HasIndex("PerInfoId");
 
                     b.ToTable("HwS");
                 });
 
-            modelBuilder.Entity("TRIAL.Persistence.entity.HomeworkT", b =>
+            modelBuilder.Entity("TRIAL.Persistence.entity.HomeworkTeacher", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("Deadline");
+                    b.Property<DateTime>("Deadline")
+                        .HasColumnType("datetime(6)");
 
-                    b.Property<decimal>("Discription")
-                        .HasColumnType("decimal(18,2)")
+                    b.Property<string>("Discription")
+                        .IsRequired()
+                        .HasColumnType("longtext")
                         .HasColumnName("Discription");
 
                     b.Property<string>("Homework")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("subjectsId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("subjectsId")
-                        .IsUnique();
+                    b.HasIndex("subjectsId");
 
                     b.ToTable("HwT");
                 });
@@ -92,57 +116,57 @@ namespace Tutorial.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("Oral")
-                        .HasColumnType("decimal(18,2)")
+                    b.Property<int>("Oral")
+                        .HasColumnType("int")
                         .HasColumnName("Oral Mark");
 
-                    b.Property<decimal>("Written")
-                        .HasColumnType("decimal(18,2)")
+                    b.Property<int>("Written")
+                        .HasColumnType("int")
                         .HasColumnName("Written Mark");
 
-                    b.Property<int>("perInfoID")
+                    b.Property<int>("perInfoId")
                         .HasColumnType("int");
 
-                    b.Property<int>("subjectsID")
+                    b.Property<int>("subjectsId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("perInfoID");
+                    b.HasIndex("perInfoId");
 
-                    b.HasIndex("subjectsID");
+                    b.HasIndex("subjectsId");
 
                     b.ToTable("marks");
                 });
 
-            modelBuilder.Entity("TRIAL.Persistence.entity.PerInfo", b =>
+            modelBuilder.Entity("TRIAL.Persistence.entity.PersonalInformation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Person")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<decimal>("PersonalNum")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(65,30)");
 
                     b.HasKey("Id");
 
@@ -155,37 +179,39 @@ namespace Tutorial.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime?>("DateOfBirth")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("IsProfileComplete")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("PasswordResetToken")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime?>("ResetTokenExpiration")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("UserName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -198,15 +224,15 @@ namespace Tutorial.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Discription")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("SubName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("perInfoId")
                         .HasColumnType("int");
@@ -219,31 +245,31 @@ namespace Tutorial.Migrations
                     b.ToTable("subjectNa");
                 });
 
-            modelBuilder.Entity("TRIAL.Persistence.entity.HomeworkS", b =>
+            modelBuilder.Entity("TRIAL.Persistence.entity.HomeworkStudent", b =>
                 {
-                    b.HasOne("TRIAL.Persistence.entity.HomeworkT", "homeworkT")
-                        .WithMany("perInfos")
-                        .HasForeignKey("homeworkTId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("TRIAL.Persistence.entity.HomeworkTeacher", "HomeworkT")
+                        .WithMany("HomeworkStudent")
+                        .HasForeignKey("HomeworkTId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TRIAL.Persistence.entity.PerInfo", "perInfo")
+                    b.HasOne("TRIAL.Persistence.entity.PersonalInformation", "PerInfo")
                         .WithMany("homeworkTs")
-                        .HasForeignKey("perInfoId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("PerInfoId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("homeworkT");
+                    b.Navigation("HomeworkT");
 
-                    b.Navigation("perInfo");
+                    b.Navigation("PerInfo");
                 });
 
-            modelBuilder.Entity("TRIAL.Persistence.entity.HomeworkT", b =>
+            modelBuilder.Entity("TRIAL.Persistence.entity.HomeworkTeacher", b =>
                 {
                     b.HasOne("TRIAL.Persistence.entity.Subjects", "subjects")
-                        .WithOne("homeworkT")
-                        .HasForeignKey("TRIAL.Persistence.entity.HomeworkT", "subjectsId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .WithMany("homeworkTs")
+                        .HasForeignKey("subjectsId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("subjects");
@@ -251,15 +277,15 @@ namespace Tutorial.Migrations
 
             modelBuilder.Entity("TRIAL.Persistence.entity.Marks", b =>
                 {
-                    b.HasOne("TRIAL.Persistence.entity.PerInfo", "perInfo")
+                    b.HasOne("TRIAL.Persistence.entity.PersonalInformation", "perInfo")
                         .WithMany("subject")
-                        .HasForeignKey("perInfoID")
+                        .HasForeignKey("perInfoId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("TRIAL.Persistence.entity.Subjects", "subjects")
-                        .WithMany("perInfos")
-                        .HasForeignKey("subjectsID")
+                        .WithMany("marks")
+                        .HasForeignKey("subjectsId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -270,7 +296,7 @@ namespace Tutorial.Migrations
 
             modelBuilder.Entity("TRIAL.Persistence.entity.Subjects", b =>
                 {
-                    b.HasOne("TRIAL.Persistence.entity.PerInfo", "perInfo")
+                    b.HasOne("TRIAL.Persistence.entity.PersonalInformation", "perInfo")
                         .WithOne("subjects")
                         .HasForeignKey("TRIAL.Persistence.entity.Subjects", "perInfoId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -279,25 +305,26 @@ namespace Tutorial.Migrations
                     b.Navigation("perInfo");
                 });
 
-            modelBuilder.Entity("TRIAL.Persistence.entity.HomeworkT", b =>
+            modelBuilder.Entity("TRIAL.Persistence.entity.HomeworkTeacher", b =>
                 {
-                    b.Navigation("perInfos");
+                    b.Navigation("HomeworkStudent");
                 });
 
-            modelBuilder.Entity("TRIAL.Persistence.entity.PerInfo", b =>
+            modelBuilder.Entity("TRIAL.Persistence.entity.PersonalInformation", b =>
                 {
                     b.Navigation("homeworkTs");
 
                     b.Navigation("subject");
 
-                    b.Navigation("subjects");
+                    b.Navigation("subjects")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("TRIAL.Persistence.entity.Subjects", b =>
                 {
-                    b.Navigation("homeworkT");
+                    b.Navigation("homeworkTs");
 
-                    b.Navigation("perInfos");
+                    b.Navigation("marks");
                 });
 #pragma warning restore 612, 618
         }

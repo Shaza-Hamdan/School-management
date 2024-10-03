@@ -27,7 +27,7 @@ namespace TRIAL.Persistence.entity
         // Add these properties
         public string? PasswordResetToken { get; set; }
         public DateTime? ResetTokenExpiration { get; set; }
-
+        public bool IsProfileComplete { get; set; } = false;
     }
 
 }
