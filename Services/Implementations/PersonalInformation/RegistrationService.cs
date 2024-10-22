@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.HttpResults;
 using EncryptDecrypt;
 using VerificationRegisterN;
+using AssigningRoleU;
 
 namespace TRIAL.Services.Implementations
 {
@@ -24,13 +25,14 @@ namespace TRIAL.Services.Implementations
         private readonly IEmailTestService emailTestservice; // Declare the email service
         private readonly VerificationRegister verificationRegister;
 
-        public RegistrationService(AppDBContext appDbContext, IOptions<DatabaseSettings> dbSettings, IEmailTestService EmailTestService, VerificationRegister verificationregister)
+        private readonly AssigningRole assigningRole;
+        public RegistrationService(AppDBContext appDbContext, IOptions<DatabaseSettings> dbSettings, IEmailTestService EmailTestService, VerificationRegister verificationregister, AssigningRole assigningrole)
         {
             appdbContext = appDbContext;
             dBSettings = dbSettings.Value;
             emailTestservice = EmailTestService;
             verificationRegister = verificationregister;
-
+            assigningRole = assigningrole;
         }
 
 
@@ -150,6 +152,52 @@ namespace TRIAL.Services.Implementations
             await appdbContext.SaveChangesAsync();
 
             return "Password reset successful.";
+        }
+        public async Task<string> AssignRoleAsync(AssignRoleRequest request, string adminEmail)
+        {
+            //Validate the request
+            if (string.IsNullOrWhiteSpace(request.UserEmail) || string.IsNullOrWhiteSpace(request.NewRole))
+            {
+                return "Invalid request parameters.";
+            }
+
+            //Find the user
+            var user = await appdbContext.registrations.SingleOrDefaultAsync(u => u.Email == request.UserEmail);
+
+            if (user == null)
+            {
+                return "User not found.";
+            }
+
+            //Check if the admin is authorized
+            if (!await assigningRole.IsAdmin(adminEmail))
+            {
+                return "Not authorized";
+            }
+
+            //Assign the new role to the user
+            user.Role = request.NewRole;
+
+            //Save changes to the database
+            appdbContext.registrations.Update(user);
+            await appdbContext.SaveChangesAsync();
+
+            return $"Role {request.NewRole} assigned to {user.Email} successfully.";
+        }
+
+        public async Task<bool> CreateInitialAdmin(string username, string email, string password)
+        {
+            var passwordHash = EnDePassword.ConvertToEncrypt(password);
+            var newAdmin = new Registration(username, email, passwordHash, "Admin");
+
+            // Check if any user exists already to prevent overwriting
+            var existingUser = await appdbContext.registrations.SingleOrDefaultAsync(u => u.Email == email);
+            if (existingUser != null) return false;
+
+            appdbContext.registrations.Add(newAdmin);
+            await appdbContext.SaveChangesAsync();
+
+            return true;
         }
 
 
