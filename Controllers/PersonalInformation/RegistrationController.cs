@@ -47,7 +47,7 @@ namespace TRIAL.Controllers
         [HttpPost("create-admin")]
         public async Task<IActionResult> CreateAdmin([FromForm] CreateAdminRequest request)
         {
-            var result = await assigningRole.CreateInitialAdmin(request.UserEmail, request.UserEmail, request.Password);
+            var result = await registrationservice.CreateInitialAdmin(request.UserEmail, request.UserEmail, request.Password);
 
             if (result)
             {
@@ -61,7 +61,7 @@ namespace TRIAL.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AssignRole([FromBody] AssignRoleRequest request)
         {
-            var result = await assigningRole.AssignRoleAsync(request, User.Identity.Name); //the system will automatically identify the admin's email using User.Identity.Name in the backend code, which retrieves the email of the currently authenticated admin making the request.
+            var result = await registrationservice.AssignRoleAsync(request, User.Identity.Name); //the system will automatically identify the admin's email using User.Identity.Name in the backend code, which retrieves the email of the currently authenticated admin making the request.
             if (result == "Not authorized")
                 return Unauthorized(result);
 
