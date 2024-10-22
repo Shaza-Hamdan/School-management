@@ -5,21 +5,21 @@ namespace Trial.DTO
     public record AddNewSubject(
     string SubName,
     string Discription,
-    int perInfoId
+    int RegistrationId
 );
 
     public record AddNewSubjectDTO(
         int Id,
         string SubName,
         string Discription,
-        int perInfoId
+        int RegistrationId
     );
 
     public record UpdateSubject(
         int Id,
         string SubName,
         string Discription,
-         int perInfoId
+         int RegistrationId
     );
     public record SubjectRetrieving(
 

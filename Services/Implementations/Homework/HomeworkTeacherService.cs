@@ -1,8 +1,4 @@
-using System.Net;
-using System.Net.Mail;
-using TRIAL.Services;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
+
 using Microsoft.EntityFrameworkCore;
 using Trial.DTO;
 using TRIAL.Persistence.Repository;
@@ -25,19 +21,6 @@ public class HomeworkTeacherService : IHomeworkTeacherService
             .ToListAsync();
     }
 
-    private async Task CleanupExpiredHomeworksAsync()
-    {
-        var now = DateTime.UtcNow;
-        var expiredHomeworks = appdbContext.HwT
-            .Where(h => h.Deadline < now)
-            .ToList();
-
-        if (expiredHomeworks.Any())
-        {
-            appdbContext.HwT.RemoveRange(expiredHomeworks);
-            await appdbContext.SaveChangesAsync();
-        }
-    }
     public async Task<HomeworkTDTO> GetHomeworkByIdAsync(int id)
     {
         var homework = await appdbContext.HwT.FindAsync(id);
@@ -86,4 +69,18 @@ public class HomeworkTeacherService : IHomeworkTeacherService
 
         return true;
     }
+    public async Task CleanupExpiredHomeworksAsync()
+    {
+        var now = DateTime.UtcNow;
+        var expiredHomeworks = appdbContext.HwT
+            .Where(h => h.Deadline < now)
+            .ToList();
+
+        if (expiredHomeworks.Any()) //The Any() method returns "true" if the list contains at least one item and "false" if it is empty.
+        {
+            appdbContext.HwT.RemoveRange(expiredHomeworks);// method takes a collection and marks each entity in that collection for deletion in the context of the database.
+            await appdbContext.SaveChangesAsync();
+        }
+    }
+
 }

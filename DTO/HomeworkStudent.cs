@@ -1,13 +1,13 @@
 namespace Trial.DTO
 {
     public record AddStudentHomeworkDTO(
-        int perInfoId,
+        int RegistrationId,
         int homeworkTId,
         string Solution);
 
     public record StudentHomeworkDTO(
         int Id,
-        int perInfoId,
+        int RegistrationId,
         int homeworkTId,
         string Solution);
 
@@ -17,7 +17,7 @@ namespace Trial.DTO
 
     public record DeleteHomework(
         int homeworkTId,
-        int perInfoId
+        int RegistrationId
     );
 
 }

@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 namespace TRIAL.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/student/homework")]
     public class StudentHomeworkController : ControllerBase
     {
         private readonly IStudentHomeworkService studenthomeworkService;

@@ -4,10 +4,9 @@ using System.Threading.Tasks;
 using Trial.DTO;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/teacher/[controller]")]
 public class HomeworkTeacherController : ControllerBase
 {
-    //ljjvkv
     private readonly IHomeworkTeacherService homeworkservice;
 
     public HomeworkTeacherController(IHomeworkTeacherService homeworkService)
@@ -15,7 +14,7 @@ public class HomeworkTeacherController : ControllerBase
         homeworkservice = homeworkService;
     }
 
-    [HttpGet]
+    [HttpGet("Get")]
     public async Task<IEnumerable<HomeworkTDTO>> GetHomeworks()
     {
         return await homeworkservice.GetHomeworksAsync();
@@ -54,5 +53,13 @@ public class HomeworkTeacherController : ControllerBase
         }
 
         return NoContent();
+    }
+
+    // Endpoint to clean up expired homeworks
+    [HttpPost("cleanup-expired")]
+    public async Task<IActionResult> CleanupExpiredHomeworks()
+    {
+        await homeworkservice.CleanupExpiredHomeworksAsync();
+        return NoContent(); // Returns a 204 No Content response
     }
 }

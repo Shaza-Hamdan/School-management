@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Trial.DTO;
 using TRIAL.Persistence.entity;
 
@@ -7,5 +8,6 @@ public interface IHomeworkTeacherService
     Task<HomeworkTDTO> GetHomeworkByIdAsync(int id);
     Task<HomeworkTDTO> AddHomeworkAsync(AddHomeworkTDTO addHomeworkDto);
     Task<bool> UpdateHomeworkAsync(ModifyHomeworkTDTO modifyHomeworkDto);
+    Task CleanupExpiredHomeworksAsync();
 
 }

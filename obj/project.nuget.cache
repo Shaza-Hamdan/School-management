@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "iqyAU9SyO5U=",
+  "dgSpecHash": "eoMd744cVX4=",
   "success": true,
-  "projectFilePath": "C:\\Users\\game\\Desktop\\be\\reg\\class\\Tutorial.csproj",
+  "projectFilePath": "C:\\Users\\game\\Desktop\\backend\\be\\4\\class\\Tutorial.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\game\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\game\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",

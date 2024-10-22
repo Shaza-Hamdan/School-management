@@ -4,11 +4,12 @@ using TRIAL.Services;
 using TRIAL.Persistence;
 using TRIAL.Services.Implementations;
 using VerificationRegisterN;
+using AssigningRoleU;
+using TRIAL.Middleware;
+using exceptionHandlingMiddleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Register the IEmailService with its implementation
-builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Add logging
 builder.Logging.ClearProviders();
@@ -21,22 +22,29 @@ builder.Services.AddDbContext<AppDBContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("ConnectionStrings"));
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
-builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
-builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IEmailTestService, EmailTestService>();
 builder.Services.AddScoped<ISubjectsRetrive, SubjectsRetrive>(); //this method registers the interface and its implementation with the DI container in ASP.NET Core.
 builder.Services.AddScoped<IHomeworkTeacherService, HomeworkTeacherService>();
 builder.Services.AddScoped<IStudentHomeworkService, StudentHomeworkService>();
 builder.Services.AddScoped<HomeworkCleanupService>(); // Register the background service
 builder.Services.AddScoped<VerificationRegister>();
+builder.Services.AddScoped<AssigningRole>();
 //
+// Register the necessary services for RoleMiddleware
+builder.Services.AddScoped<AppDBContext>();
+builder.Services.AddScoped<RoleMiddleware>();
 
+//
+builder.Services.AddScoped<ExceptionHandlingMiddleware>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// Use middleware in the app
+app.UseMiddleware<RoleMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {

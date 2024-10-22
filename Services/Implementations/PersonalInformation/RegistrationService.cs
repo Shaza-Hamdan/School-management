@@ -21,14 +21,14 @@ namespace TRIAL.Services.Implementations
         //database connection
         private readonly AppDBContext appdbContext;
         private readonly DatabaseSettings dBSettings;
-        private readonly IEmailService emailservice; // Declare the email service
+        private readonly IEmailTestService emailTestservice; // Declare the email service
         private readonly VerificationRegister verificationRegister;
 
-        public RegistrationService(AppDBContext appDbContext, IOptions<DatabaseSettings> dbSettings, IEmailService emailService, VerificationRegister verificationregister)
+        public RegistrationService(AppDBContext appDbContext, IOptions<DatabaseSettings> dbSettings, IEmailTestService EmailTestService, VerificationRegister verificationregister)
         {
             appdbContext = appDbContext;
-            dBSettings = dbSettings.Value ?? throw new ArgumentNullException(nameof(dbSettings));
-            emailservice = emailService ?? throw new ArgumentNullException(nameof(emailService)); // Initialize the email service
+            dBSettings = dbSettings.Value;
+            emailTestservice = EmailTestService;
             verificationRegister = verificationregister;
 
         }
@@ -51,7 +51,7 @@ namespace TRIAL.Services.Implementations
             verificationRegister.StoreVerificationCode(email, verificationCode);
 
             // Send verification code to the email
-            emailservice.SendEmail(email, "Verification Code", $"Your verification code is {verificationCode}");
+            emailTestservice.SendEmail(email, "Verification Code", $"Your verification code is {verificationCode}");
             return "Verification code sent to email";
         }
 
@@ -115,7 +115,7 @@ namespace TRIAL.Services.Implementations
 
         }
 
-        public async Task<string> GeneratePasswordResetTokenAsync(string email) //send the link to the email after this the email contains the link
+        public async Task<string> GeneratePasswordResetTokenAsync(string email)
         {
             var user = await appdbContext.registrations.FirstOrDefaultAsync(u => u.Email == email);
             if (user == null)
@@ -123,14 +123,14 @@ namespace TRIAL.Services.Implementations
                 return "User not found.";
             }
 
-            var token = Guid.NewGuid().ToString();
+            var token = Guid.NewGuid().ToString(); //generates a Globally Unique IDentifier....128-bit number
             user.PasswordResetToken = token;
             user.ResetTokenExpiration = DateTime.Now.AddHours(1);
             appdbContext.registrations.Update(user); //This updates the user's record with the new token and expiration time.
             await appdbContext.SaveChangesAsync();
 
             var resetLink = $"http://localhost:5000/api/account/resetpassword?token={token}&email={email}";
-            emailservice.SendEmail(email, "Password Reset Request", $"Click <a href='{resetLink}'>here</a> to reset your password.");
+            emailTestservice.SendEmail(email, "Password Reset Request", $"Click <a href='{resetLink}'>here</a> to reset your password.");//here is a hyperlink
 
             return "Password reset token generated.";
         }
@@ -143,7 +143,7 @@ namespace TRIAL.Services.Implementations
                 return "Invalid token or token expired.";
             }
 
-            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+            user.PasswordHash = EnDePassword.ConvertToEncrypt(model.NewPassword);
             user.PasswordResetToken = null;
             user.ResetTokenExpiration = null;
             appdbContext.registrations.Update(user);

@@ -11,6 +11,8 @@ using Microsoft.Data.SqlClient;
 using Trial.DTO;
 using TRIAL.Services;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
+using AssigningRoleU;
 
 namespace TRIAL.Controllers
 {
@@ -19,12 +21,13 @@ namespace TRIAL.Controllers
     public class RegistrationController : ControllerBase
     {
         private readonly IRegistrationService registrationservice;
-        private readonly ILogger<RegistrationController> _logger;
-
-        public RegistrationController(IRegistrationService registrationService, ILogger<RegistrationController> logger)
+        private readonly AssigningRole assigningRole;
+        // private readonly EmailService emailService;
+        public RegistrationController(IRegistrationService registrationService, AssigningRole assigningrole)//, EmailService emailservice)  //, ILogger<RegistrationController> logger)
         {
             registrationservice = registrationService;
-            _logger = logger;
+            assigningRole = assigningrole;
+            // emailService = emailservice;
         }
 
         [HttpPost("register")]
@@ -39,6 +42,30 @@ namespace TRIAL.Controllers
             }
 
             return Ok(new { message = "Verification code sent to email." });
+        }
+
+        [HttpPost("create-admin")]
+        public async Task<IActionResult> CreateAdmin([FromForm] CreateAdminRequest request)
+        {
+            var result = await assigningRole.CreateInitialAdmin(request.UserEmail, request.UserEmail, request.Password);
+
+            if (result)
+            {
+                return Redirect("/home"); // Redirect to the main application page
+            }
+
+            return BadRequest("Error creating admin. Please try again.");
+        }
+
+        [HttpPost("assign-role")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AssignRole([FromBody] AssignRoleRequest request)
+        {
+            var result = await assigningRole.AssignRoleAsync(request, User.Identity.Name); //the system will automatically identify the admin's email using User.Identity.Name in the backend code, which retrieves the email of the currently authenticated admin making the request.
+            if (result == "Not authorized")
+                return Unauthorized(result);
+
+            return Ok(result);
         }
 
         [HttpPost("VerifyCode")]
@@ -98,5 +125,7 @@ namespace TRIAL.Controllers
             }
             return BadRequest(new { Message = result });
         }
+
+
     }
 }

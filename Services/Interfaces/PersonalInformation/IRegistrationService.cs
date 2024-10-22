@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Trial.DTO;
 
 namespace TRIAL.Services
@@ -9,5 +10,6 @@ namespace TRIAL.Services
         Task<string> GeneratePasswordResetTokenAsync(string email);
         Task<string> ResetPasswordAsync(ResetPasswordRequest model);
         string VerifyCode(VerifyCodeRequest request);
+
     }
 }

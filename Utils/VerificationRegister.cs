@@ -10,12 +10,12 @@ namespace VerificationRegisterN
     public class VerificationRegister
     {
         private readonly AppDBContext appdbContext;
-        private readonly IEmailService emailservice;
+        private readonly IEmailTestService emailTestService;
 
-        public VerificationRegister(AppDBContext appdBContext, IEmailService emailService)
+        public VerificationRegister(AppDBContext appdBContext, IEmailTestService EmailTestService)
         {
             appdbContext = appdBContext;
-            emailservice = emailService;
+            emailTestService = EmailTestService;
         }
         public string GenerateVerificationCode()
         {
@@ -50,18 +50,21 @@ namespace VerificationRegisterN
             string passwordHash = EnDePassword.ConvertToEncrypt(password);
 
             // Store the user in the database
-            var registration = new Registration
-            {
-                UserName = username,
-                Email = email,
-                PasswordHash = passwordHash
-            };
+            // var registration = new Registration
+            // {
+            //     UserName = username,
+            //     Email = email,
+            //     PasswordHash = passwordHash
+
+            // };
+
+            var registration = new Registration(username, email, passwordHash, "Student");
 
             appdbContext.registrations.Add(registration);
             appdbContext.SaveChanges();
 
             // Send the username and password to the user's email
-            emailservice.SendEmail(email, "Your Account Details", $"Username: {username}\nPassword: {password}");
+            emailTestService.SendEmail(email, "Your Account Details", $"Username: {username}\nPassword: {password}");
 
             return "Username and password sent to email";
         }

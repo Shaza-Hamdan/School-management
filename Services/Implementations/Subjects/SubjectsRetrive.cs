@@ -30,6 +30,7 @@ namespace TRIAL.Services.Implementations
                         subs.Discription
                     ));
         }
+
         public async Task<SubjectDetails> GetSubjectDetailAsync(int subjectId)
         {
             var subject = await appdbContext.subjectNa
@@ -82,12 +83,12 @@ namespace TRIAL.Services.Implementations
             {
                 SubName = subject.SubName,
                 Discription = subject.Discription,
-                perInfoId = subject.perInfoId
+                RegistrationId = subject.RegistrationId
             };
             appdbContext.subjectNa.Add(newSubject);
             await appdbContext.SaveChangesAsync();
 
-            return new AddNewSubjectDTO(newSubject.Id, newSubject.SubName, newSubject.Discription, newSubject.perInfoId);
+            return new AddNewSubjectDTO(newSubject.Id, newSubject.SubName, newSubject.Discription, newSubject.RegistrationId);
 
         }
 
@@ -101,7 +102,7 @@ namespace TRIAL.Services.Implementations
 
             subject.SubName = UpSub.SubName;
             subject.Discription = UpSub.Discription;
-            subject.perInfoId = UpSub.perInfoId;
+            subject.RegistrationId = UpSub.RegistrationId;
             appdbContext.subjectNa.Update(subject);
             await appdbContext.SaveChangesAsync();
 

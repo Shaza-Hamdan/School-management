@@ -12,9 +12,9 @@ namespace TRIAL.Persistence.entity
         public int Id { get; set; }
 
 
-        [ForeignKey("perInfo")]
-        public int perInfoId { get; set; }
-        public PersonalInformation? perInfo { get; set; }
+        [ForeignKey("Registration")]
+        public int RegistrationId { get; set; }
+        public Registration Registration { get; set; }
 
 
         [ForeignKey("subjects")]

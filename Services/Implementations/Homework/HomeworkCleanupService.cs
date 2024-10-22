@@ -1,12 +1,6 @@
-using System.Net;
-using System.Net.Mail;
-using TRIAL.Services;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using Microsoft.EntityFrameworkCore;
-using Trial.DTO;
+
 using TRIAL.Persistence.Repository;
-using TRIAL.Persistence.entity;
+
 
 public class HomeworkCleanupService : BackgroundService
 {

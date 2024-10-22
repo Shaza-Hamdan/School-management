@@ -17,12 +17,12 @@ namespace TRIAL.Persistence.entity
         [Column(TypeName = "DATETIME")] // For date and time
         public DateTime Created { get; set; } // = DateTime.Now;
 
-        [ForeignKey("PerInfo")] // Updated to PascalCase
-        public int PerInfoId { get; set; } // Updated to PascalCase
-        public PersonalInformation PerInfo { get; set; }
+        [ForeignKey("Registration")]
+        public int RegistrationId { get; set; }
+        public Registration Registration { get; set; }
 
-        [ForeignKey("HomeworkT")] // Updated to PascalCase
-        public int HomeworkTId { get; set; } // Updated to PascalCase
+        [ForeignKey("HomeworkT")]
+        public int HomeworkTId { get; set; }
         public HomeworkTeacher HomeworkT { get; set; }
     }
 }
