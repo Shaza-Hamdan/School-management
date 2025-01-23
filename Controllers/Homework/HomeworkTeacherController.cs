@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Trial.DTO;
 
 [ApiController]
-[Route("api/teacher/[controller]")]
+[Route("api/[controller]")]
 public class HomeworkTeacherController : ControllerBase
 {
     private readonly IHomeworkTeacherService homeworkservice;
@@ -32,10 +32,22 @@ public class HomeworkTeacherController : ControllerBase
     }
 
     [HttpPost("Post")]
-    public async Task<ActionResult<HomeworkTDTO>> AddHomework(AddHomeworkTDTO addHomeworkDto)
+    public async Task<string> AddHomework(AddHomeworkTDTO addHomeworkDto)
     {
+
+        // Call the service method to add the homework
         var homework = await homeworkservice.AddHomeworkAsync(addHomeworkDto);
-        return CreatedAtAction(nameof(GetHomework), new { id = homework.Id }, homework);
+
+        // Check if the homework creation was successful
+        if (homework == null)
+        {
+            return "Homework could not be created.";
+        }
+        else
+        {
+            return "Homework added successfully";
+        }
+
     }
 
     [HttpPut("Put/{id}")]
@@ -59,7 +71,14 @@ public class HomeworkTeacherController : ControllerBase
     [HttpPost("cleanup-expired")]
     public async Task<IActionResult> CleanupExpiredHomeworks()
     {
-        await homeworkservice.CleanupExpiredHomeworksAsync();
-        return NoContent(); // Returns a 204 No Content response
+        var deleted = await homeworkservice.CleanupExpiredHomeworksAsync();
+        if (deleted)
+        {
+            return Ok("Expired homework has been deleted.");
+        }
+        else
+        {
+            return Ok("No expired homework has been found.");
+        }
     }
 }

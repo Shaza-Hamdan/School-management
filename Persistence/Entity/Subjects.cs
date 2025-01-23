@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TRIAL.Persistence.entity
 {
+    [Table("subjectNa")]
     public class Subjects
     {
         [Key]

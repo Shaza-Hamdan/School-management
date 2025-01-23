@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TRIAL.Persistence.Repository;
 
@@ -11,9 +12,11 @@ using TRIAL.Persistence.Repository;
 namespace Tutorial.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241106181014_Initial1")]
+    partial class Initial1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -96,12 +99,12 @@ namespace Tutorial.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("subjectsId")
+                    b.Property<int>("subjectId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("subjectsId");
+                    b.HasIndex("subjectId");
 
                     b.ToTable("HwT");
                 });
@@ -227,13 +230,13 @@ namespace Tutorial.Migrations
 
             modelBuilder.Entity("TRIAL.Persistence.entity.HomeworkTeacher", b =>
                 {
-                    b.HasOne("TRIAL.Persistence.entity.Subjects", "subjects")
+                    b.HasOne("TRIAL.Persistence.entity.Subjects", "subject")
                         .WithMany("homeworkTs")
-                        .HasForeignKey("subjectsId")
+                        .HasForeignKey("subjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("subjects");
+                    b.Navigation("subject");
                 });
 
             modelBuilder.Entity("TRIAL.Persistence.entity.Marks", b =>

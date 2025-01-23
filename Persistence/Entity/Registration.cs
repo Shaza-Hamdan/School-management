@@ -18,8 +18,8 @@ namespace TRIAL.Persistence.entity
         [EmailAddress(ErrorMessage = "Please enter a valid E-mail address.")] //validate the input as an Email Address
         [Required]
         public string Email { get; set; }
-        [Required]
-        public string Role { get; set; }  // Roles: "Admin", "Teacher", "Student", etc.
+        //[Required]
+        // public string Role { get; set; }  // Roles: "Admin", "Teacher", "Student", etc.
 
         public DateTime? DateOfBirth { get; set; }
         [Required]
@@ -32,17 +32,17 @@ namespace TRIAL.Persistence.entity
         public DateTime? ResetTokenExpiration { get; set; }
         //
 
-        public bool IsProfileComplete { get; set; } = false;
+        //public bool IsProfileComplete { get; set; } = false;
 
         // Constructor
-        public Registration() { }
-        public Registration(string username, string email, string passwordHash, string role)
-        {
-            UserName = username;
-            Email = email;
-            PasswordHash = passwordHash;
-            Role = role;
-        }
+        // public Registration() { }
+        // public Registration(string username, string email, string passwordHash, string role)
+        // {
+        //     UserName = username;
+        //     Email = email;
+        //     PasswordHash = passwordHash;
+        //     Role = role;
+        // }
 
         //oto, every teacher has a subject
         public Subjects subjects { get; set; }

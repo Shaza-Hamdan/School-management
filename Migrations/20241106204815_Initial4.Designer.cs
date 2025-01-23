@@ -12,8 +12,8 @@ using TRIAL.Persistence.Repository;
 namespace Tutorial.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20241018111917_InitialMySQLMigration2")]
-    partial class InitialMySQLMigration2
+    [Migration("20241106204815_Initial4")]
+    partial class Initial4
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,7 +35,6 @@ namespace Tutorial.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasMaxLength(6)
                         .HasColumnType("varchar(6)");
 
                     b.Property<string>("Email")
@@ -61,15 +60,15 @@ namespace Tutorial.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("DATETIME");
 
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(255)");
+
                     b.Property<int>("HomeworkTId")
                         .HasColumnType("int");
 
                     b.Property<int>("RegistrationId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Solution")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -160,9 +159,6 @@ namespace Tutorial.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<bool>("IsProfileComplete")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -176,10 +172,6 @@ namespace Tutorial.Migrations
 
                     b.Property<DateTime?>("ResetTokenExpiration")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("longtext");
 
                     b.Property<string>("UserName")
                         .IsRequired()

@@ -10,9 +10,13 @@ namespace TRIAL.Persistence.entity
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Required]
-        [Column(TypeName = "TEXT")] // For large text data
-        public string Solution { get; set; }
+        // [Required]
+        // [Column(TypeName = "TEXT")] // For large text data
+        // public string Solution { get; set; }
+
+        [Column(TypeName = "VARCHAR(255)")] // To store the file path or file identifier
+        public string FilePath { get; set; }
+
 
         [Column(TypeName = "DATETIME")] // For date and time
         public DateTime Created { get; set; } // = DateTime.Now;

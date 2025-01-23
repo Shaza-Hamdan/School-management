@@ -13,7 +13,7 @@ namespace Trial.DTO
         int subjectsId
     );
     public record ModifyHomeworkTDTO(
-        int Id, //
+        int Id,
         string Homework,
         string Discription,
         DateTime Deadline);

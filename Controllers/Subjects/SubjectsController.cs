@@ -16,11 +16,11 @@ namespace TRIAL.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class SubjectsRetriveController : ControllerBase
+    public class SubjectsController : ControllerBase
     {
-        private readonly ISubjectsRetrive subjectsret;
+        private readonly ISubjectsService subjectsret;
 
-        public SubjectsRetriveController(ISubjectsRetrive SubjectsRet)
+        public SubjectsController(ISubjectsService SubjectsRet)
         {
             subjectsret = SubjectsRet;
         }
@@ -65,8 +65,27 @@ namespace TRIAL.Controllers
                 return BadRequest(ModelState);
             }
 
-            var newSubject = await subjectsret.AddNewSubject(subject);
-            return CreatedAtAction(nameof(GetSubjectDetail), new { id = newSubject.Id }, newSubject);
+            try
+            {
+                // Call the service method to add the new subject
+                var result = await subjectsret.AddNewSubject(subject);
+
+                // If successful, return a success message
+                if (result == "Successfully added the new subject.")
+                {
+                    return Ok(new { message = result });
+                }
+                else
+                {
+                    // If there was an error, return a failure message
+                    return BadRequest(new { message = result });
+                }
+            }
+            catch (Exception ex)
+            {
+                // Catch any unexpected errors and return a failure message
+                return BadRequest(new { message = "Couldn't add new subject", error = ex.Message });
+            }
         }
 
         [HttpPut("Update/{id}")]
@@ -86,10 +105,10 @@ namespace TRIAL.Controllers
 
             if (!result)
             {
-                return NotFound();
+                return BadRequest(new { message = "Could not update the subject." });
             }
 
-            return NoContent();
+            return Ok(new { message = "Successfully updated the subject." });
         }
     }
 }

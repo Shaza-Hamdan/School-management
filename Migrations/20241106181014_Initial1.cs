@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Tutorial.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMySQLMigration1 : Migration
+    public partial class Initial1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -24,34 +24,12 @@ namespace Tutorial.Migrations
                     Email = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Expiry = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    Code = table.Column<string>(type: "varchar(6)", maxLength: 6, nullable: false)
+                    Code = table.Column<string>(type: "varchar(6)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_emailVerification", x => x.Id);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Person_Information",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Email = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Address = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    PersonalNum = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    Person = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Person_Information", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -74,8 +52,7 @@ namespace Tutorial.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     PasswordResetToken = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    ResetTokenExpiration = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    IsProfileComplete = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                    ResetTokenExpiration = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -93,17 +70,17 @@ namespace Tutorial.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Discription = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    perInfoId = table.Column<int>(type: "int", nullable: false)
+                    RegistrationId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_subjectNa", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_subjectNa_Person_Information_perInfoId",
-                        column: x => x.perInfoId,
-                        principalTable: "Person_Information",
+                        name: "FK_subjectNa_registrations_RegistrationId",
+                        column: x => x.RegistrationId,
+                        principalTable: "registrations",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -118,14 +95,14 @@ namespace Tutorial.Migrations
                     Discription = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Deadline = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    subjectsId = table.Column<int>(type: "int", nullable: false)
+                    subjectId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_HwT", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_HwT_subjectNa_subjectsId",
-                        column: x => x.subjectsId,
+                        name: "FK_HwT_subjectNa_subjectId",
+                        column: x => x.subjectId,
                         principalTable: "subjectNa",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -138,7 +115,7 @@ namespace Tutorial.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    perInfoId = table.Column<int>(type: "int", nullable: false),
+                    RegistrationId = table.Column<int>(type: "int", nullable: false),
                     subjectsId = table.Column<int>(type: "int", nullable: false),
                     OralMark = table.Column<int>(name: "Oral Mark", type: "int", nullable: false),
                     WrittenMark = table.Column<int>(name: "Written Mark", type: "int", nullable: false)
@@ -147,17 +124,17 @@ namespace Tutorial.Migrations
                 {
                     table.PrimaryKey("PK_marks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_marks_Person_Information_perInfoId",
-                        column: x => x.perInfoId,
-                        principalTable: "Person_Information",
+                        name: "FK_marks_registrations_RegistrationId",
+                        column: x => x.RegistrationId,
+                        principalTable: "registrations",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_marks_subjectNa_subjectsId",
                         column: x => x.subjectsId,
                         principalTable: "subjectNa",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -167,10 +144,10 @@ namespace Tutorial.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Solution = table.Column<string>(type: "TEXT", nullable: false)
+                    FilePath = table.Column<string>(type: "VARCHAR(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Created = table.Column<DateTime>(type: "DATETIME", nullable: false),
-                    PerInfoId = table.Column<int>(type: "int", nullable: false),
+                    RegistrationId = table.Column<int>(type: "int", nullable: false),
                     HomeworkTId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -183,9 +160,9 @@ namespace Tutorial.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_HwS_Person_Information_PerInfoId",
-                        column: x => x.PerInfoId,
-                        principalTable: "Person_Information",
+                        name: "FK_HwS_registrations_RegistrationId",
+                        column: x => x.RegistrationId,
+                        principalTable: "registrations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -197,19 +174,19 @@ namespace Tutorial.Migrations
                 column: "HomeworkTId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HwS_PerInfoId",
+                name: "IX_HwS_RegistrationId",
                 table: "HwS",
-                column: "PerInfoId");
+                column: "RegistrationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HwT_subjectsId",
+                name: "IX_HwT_subjectId",
                 table: "HwT",
-                column: "subjectsId");
+                column: "subjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_marks_perInfoId",
+                name: "IX_marks_RegistrationId",
                 table: "marks",
-                column: "perInfoId");
+                column: "RegistrationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_marks_subjectsId",
@@ -217,9 +194,9 @@ namespace Tutorial.Migrations
                 column: "subjectsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_subjectNa_perInfoId",
+                name: "IX_subjectNa_RegistrationId",
                 table: "subjectNa",
-                column: "perInfoId",
+                column: "RegistrationId",
                 unique: true);
         }
 
@@ -236,16 +213,13 @@ namespace Tutorial.Migrations
                 name: "marks");
 
             migrationBuilder.DropTable(
-                name: "registrations");
-
-            migrationBuilder.DropTable(
                 name: "HwT");
 
             migrationBuilder.DropTable(
                 name: "subjectNa");
 
             migrationBuilder.DropTable(
-                name: "Person_Information");
+                name: "registrations");
         }
     }
 }

@@ -41,7 +41,9 @@ namespace Trial.DTO
     public record SubjectDetails(
     int Id,
     string Name,
+    string Discription,
     IEnumerable<MarkDTO> marks,
-    IEnumerable<HomeworkDTO> homeworkTs);
+    IEnumerable<HomeworkDTO> homeworkTs,
+    int RegistrationId);
 
 }

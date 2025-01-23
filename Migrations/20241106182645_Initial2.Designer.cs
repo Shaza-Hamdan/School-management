@@ -12,8 +12,8 @@ using TRIAL.Persistence.Repository;
 namespace Tutorial.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20241003205512_InitialMySQLMigration1")]
-    partial class InitialMySQLMigration1
+    [Migration("20241106182645_Initial2")]
+    partial class Initial2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,7 +35,6 @@ namespace Tutorial.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasMaxLength(6)
                         .HasColumnType("varchar(6)");
 
                     b.Property<string>("Email")
@@ -61,21 +60,21 @@ namespace Tutorial.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("DATETIME");
 
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(255)");
+
                     b.Property<int>("HomeworkTId")
                         .HasColumnType("int");
 
-                    b.Property<int>("PerInfoId")
+                    b.Property<int>("RegistrationId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Solution")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.HasIndex("HomeworkTId");
 
-                    b.HasIndex("PerInfoId");
+                    b.HasIndex("RegistrationId");
 
                     b.ToTable("HwS");
                 });
@@ -122,55 +121,23 @@ namespace Tutorial.Migrations
                         .HasColumnType("int")
                         .HasColumnName("Oral Mark");
 
+                    b.Property<int>("RegistrationId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Written")
                         .HasColumnType("int")
                         .HasColumnName("Written Mark");
-
-                    b.Property<int>("perInfoId")
-                        .HasColumnType("int");
 
                     b.Property<int>("subjectsId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("perInfoId");
+                    b.HasIndex("RegistrationId");
 
                     b.HasIndex("subjectsId");
 
                     b.ToTable("marks");
-                });
-
-            modelBuilder.Entity("TRIAL.Persistence.entity.PersonalInformation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Person")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<decimal>("PersonalNum")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Person_Information");
                 });
 
             modelBuilder.Entity("TRIAL.Persistence.entity.Registration", b =>
@@ -191,9 +158,6 @@ namespace Tutorial.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.Property<bool>("IsProfileComplete")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -230,16 +194,16 @@ namespace Tutorial.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int>("RegistrationId")
+                        .HasColumnType("int");
+
                     b.Property<string>("SubName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("perInfoId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("perInfoId")
+                    b.HasIndex("RegistrationId")
                         .IsUnique();
 
                     b.ToTable("subjectNa");
@@ -253,15 +217,15 @@ namespace Tutorial.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TRIAL.Persistence.entity.PersonalInformation", "PerInfo")
+                    b.HasOne("TRIAL.Persistence.entity.Registration", "Registration")
                         .WithMany("homeworkTs")
-                        .HasForeignKey("PerInfoId")
+                        .HasForeignKey("RegistrationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("HomeworkT");
 
-                    b.Navigation("PerInfo");
+                    b.Navigation("Registration");
                 });
 
             modelBuilder.Entity("TRIAL.Persistence.entity.HomeworkTeacher", b =>
@@ -277,32 +241,32 @@ namespace Tutorial.Migrations
 
             modelBuilder.Entity("TRIAL.Persistence.entity.Marks", b =>
                 {
-                    b.HasOne("TRIAL.Persistence.entity.PersonalInformation", "perInfo")
+                    b.HasOne("TRIAL.Persistence.entity.Registration", "Registration")
                         .WithMany("subject")
-                        .HasForeignKey("perInfoId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("RegistrationId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TRIAL.Persistence.entity.Subjects", "subjects")
                         .WithMany("marks")
                         .HasForeignKey("subjectsId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("perInfo");
+                    b.Navigation("Registration");
 
                     b.Navigation("subjects");
                 });
 
             modelBuilder.Entity("TRIAL.Persistence.entity.Subjects", b =>
                 {
-                    b.HasOne("TRIAL.Persistence.entity.PersonalInformation", "perInfo")
+                    b.HasOne("TRIAL.Persistence.entity.Registration", "Registration")
                         .WithOne("subjects")
-                        .HasForeignKey("TRIAL.Persistence.entity.Subjects", "perInfoId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("TRIAL.Persistence.entity.Subjects", "RegistrationId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("perInfo");
+                    b.Navigation("Registration");
                 });
 
             modelBuilder.Entity("TRIAL.Persistence.entity.HomeworkTeacher", b =>
@@ -310,7 +274,7 @@ namespace Tutorial.Migrations
                     b.Navigation("HomeworkStudent");
                 });
 
-            modelBuilder.Entity("TRIAL.Persistence.entity.PersonalInformation", b =>
+            modelBuilder.Entity("TRIAL.Persistence.entity.Registration", b =>
                 {
                     b.Navigation("homeworkTs");
 

@@ -14,10 +14,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TRIAL.Services.Implementations
 {
-    public class SubjectsRetrive : ISubjectsRetrive
+    public class SubjectsService : ISubjectsService
     {
         private readonly AppDBContext appdbContext;
-        public SubjectsRetrive(AppDBContext appDbContext)
+        public SubjectsService(AppDBContext appDbContext)
         {
             appdbContext = appDbContext;
         }
@@ -46,7 +46,7 @@ namespace TRIAL.Services.Implementations
             var marks = subject.marks.Select(m => new MarkDTO(m.Id, m.Oral, m.Written));//Convert Marks to MarkDTOs 
             var homeworkAssignments = subject.homeworkTs.Select(h => new HomeworkDTO(h.Id, h.Homework, h.Deadline, h.Discription));//Convert Homework Assignments to HomeworkDTOs
 
-            return new SubjectDetails(subject.Id, subject.SubName, marks, homeworkAssignments);
+            return new SubjectDetails(subject.Id, subject.SubName, subject.Discription, marks, homeworkAssignments, subject.RegistrationId);
         }
 
         public async Task<bool> DeleteSubjectAsync(int subjectId)
@@ -76,20 +76,26 @@ namespace TRIAL.Services.Implementations
             return true;
         }
 
-        public async Task<AddNewSubjectDTO> AddNewSubject(AddNewSubject subject)
+        public async Task<string> AddNewSubject(AddNewSubject subject)
         {
-            // Create a new subject entity
-            var newSubject = new Subjects
+            try
             {
-                SubName = subject.SubName,
-                Discription = subject.Discription,
-                RegistrationId = subject.RegistrationId
-            };
-            appdbContext.subjectNa.Add(newSubject);
-            await appdbContext.SaveChangesAsync();
-
-            return new AddNewSubjectDTO(newSubject.Id, newSubject.SubName, newSubject.Discription, newSubject.RegistrationId);
-
+                // Create a new subject entity
+                var newSubject = new Subjects
+                {
+                    SubName = subject.SubName,
+                    Discription = subject.Discription,
+                    RegistrationId = subject.RegistrationId
+                };
+                appdbContext.subjectNa.Add(newSubject);
+                await appdbContext.SaveChangesAsync();
+                return "Successfully added the new subject.";
+            }
+            catch (Exception)
+            {
+                // If an error occurs, return an error message
+                return "Couldn't add new subject";
+            }
         }
 
         public async Task<bool> UpdateSubject(UpdateSubject UpSub)

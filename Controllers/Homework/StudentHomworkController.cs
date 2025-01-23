@@ -11,67 +11,103 @@ using Microsoft.Data.SqlClient;
 using Trial.DTO;
 using TRIAL.Services;
 using Microsoft.Extensions.Logging;
+using TRIAL.Persistence.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace TRIAL.Controllers
 {
     [ApiController]
-    [Route("api/student/homework")]
+    [Route("api/[controller]")]
     public class StudentHomeworkController : ControllerBase
     {
         private readonly IStudentHomeworkService studenthomeworkService;
-
-        public StudentHomeworkController(IStudentHomeworkService studentHomeworkservice)
+        private readonly AppDBContext appdbContext;
+        public StudentHomeworkController(AppDBContext appDbContext, IStudentHomeworkService studentHomeworkservice)
         {
+
             studenthomeworkService = studentHomeworkservice;
         }
 
-        [HttpPost("Post")]
-        public async Task<IActionResult> SubmitHomework([FromBody] AddStudentHomeworkDTO addStudentHomeworkDto)
-        {
-            var result = await studenthomeworkService.SubmitHomeworkAsync(addStudentHomeworkDto);
-            return CreatedAtAction(nameof(GetStudentHomeworkById), new { id = result.Id }, result);
-        }
 
-        [HttpGet("Get/{id}")]
-        public async Task<IActionResult> GetStudentHomeworkById(int id)
+        [HttpPost("upload")]
+        public async Task<IActionResult> UploadHomework(int homeworkTId, int registrationId, IFormFile file)
         {
-            var result = await studenthomeworkService.GetStudentHomeworkByIdAsync(id);
-            if (result == null)
+            try
             {
-                return NotFound();
+                var result = await studenthomeworkService.UploadHomeworkFileAsync(homeworkTId, registrationId, file);
+                return Ok(result);
             }
-            return Ok(result);
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        [HttpPut("Update")]
-        public async Task<ActionResult> UpdateStudentHomework([FromBody] ModifyStudentHomeworkDTO modifyStudentHomeworkDto)
+
+        [HttpGet("Get/{RegistrationId}")]
+        public async Task<IActionResult> GetStudentHomeworkById(int RegistrationId)
         {
-            var result = await studenthomeworkService.UpdateStudentHomeworkAsync(modifyStudentHomeworkDto);
+            try
+            {
+                var homework = await studenthomeworkService.GetStudentHomeworkByIdAsync(RegistrationId);
+                if (homework == null)
+                {
+                    return NotFound("Homework not found.");
+                }
+
+                // Optionally, return the file itself if you want the teacher to download it
+                var filePath = homework.FilePath;
+                var fileBytes = await System.IO.File.ReadAllBytesAsync(filePath);//Storing the file in a byte array
+                return File(fileBytes, "application/octet-stream", Path.GetFileName(filePath));
+
+                // Alternatively, you can return homework details if a download is not needed
+                // return Ok(homework);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateHomework(int homeworkTId, int registrationId, IFormFile newFile)
+        {
+            if (newFile == null || newFile.Length == 0)
+            {
+                return BadRequest("A valid file must be uploaded.");
+            }
+
+            try
+            {
+                var result = await studenthomeworkService.UpdateHomeworkFileAsync(homeworkTId, registrationId, newFile);
+                return Ok(new { message = result });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message); // File not uploaded
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound(ex.Message); // Record not found
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while updating the homework file.");
+            }
+        }
+
+
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> DeleteHomework(int Id)
+        {
+            bool result = await studenthomeworkService.DeleteHomework(Id);
+
             if (!result)
             {
-                return NotFound();
+                return NotFound(new { Message = "Homework has not been found or you do not have permission to delete it." });
             }
 
-            return NoContent();
-        }
-        [HttpGet("Get")]
-        public async Task<IActionResult> GetStudentHomeworkAsync()
-        {
-            var homeworks = await studenthomeworkService.GetStudentHomeworkAsync();
-            return Ok(homeworks);
-        }
-
-        [HttpDelete("{deleteStudentHomeworkId}")]
-        public async Task<IActionResult> DeleteHomework(DeleteHomework hwork)
-        {
-            bool result = await studenthomeworkService.DeleteHomework(hwork);
-
-            if (!result)
-            {
-                return NotFound(new { Message = "Homework submission not found or you do not have permission to delete it." });
-            }
-
-            return Ok(new { Message = "Homework submission deleted successfully." });
+            return Ok(new { Message = "Homework deleted successfully." });
         }
     }
 }
